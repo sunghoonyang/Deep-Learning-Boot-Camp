@@ -1,4 +1,4 @@
-# All-in-one Jupyter Docker image for GPU Deep Learning using ArrayFire, CUDA etc. 
+# All-in-one Jupyter Docker image for GPU Deep Learning using PyCUDA, ArrayFire, CUDA etc. 
 
 NOTE: Building this image may take several hours since CMAKE is being built from source. 
 https://github.com/QuantScientist/deep-ml-meetups
@@ -8,6 +8,7 @@ https://github.com/QuantScientist/deep-ml-meetups
 On top of all the fancy deep learning libraries, this docker image contains:
 
 * ArrayFire
+* PyCUDA
 * Python 
 * LLVM
 * LLDB
