@@ -1,6 +1,7 @@
 #FROM ubuntu:16.04
 #FROM ubuntu:trusty
 FROM nvidia/cuda:8.0-devel-ubuntu16.04
+#FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 
 MAINTAINER Shlomo <shlomo@deep-ml.com>
 
