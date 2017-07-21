@@ -6,6 +6,7 @@ https://github.com/QuantScientist/deep-ml-meetups
 This repository includes utilities to build and run my NVIDIA Docker image for the Deep Learning School:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
 
+!(cuda)[cuda-test.png]
 
 Please be aware that this project is currently **experimental**.
 
