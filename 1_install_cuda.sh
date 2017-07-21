@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+OLD STUFF DO NOT USE !!! 
+
 if [ "$(whoami)" == "root" ]; then
   echo "running as root, please run as user you want to have stuff installed as"
   exit 1
