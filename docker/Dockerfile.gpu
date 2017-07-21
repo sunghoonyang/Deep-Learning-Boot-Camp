@@ -1,7 +1,6 @@
 #FROM ubuntu:16.04
 #FROM ubuntu:trusty
 FROM nvidia/cuda:8.0-devel-ubuntu16.04
-#FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 
 MAINTAINER Shlomo <shlomo@deep-ml.com>
 
@@ -163,28 +162,37 @@ ENV AF_PATH=/opt/arrayfire AF_DISABLE_GRAPHICS=1
 
 #CMake CUDA Variable CUDA_CUDA_LIBRARY Not found
 ENV CUDA_LIB_PATH=/usr/local/cuda/lib64/stubs/
-RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/libcuda.so.1
-RUN ln -s /usr/lib/libcuda.so.1 /usr/lib/libcuda.so
+ENV  PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 
-#RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/libcuda.so.1 && \
-#    ln -s /usr/lib/libcuda.so.1 /usr/lib/libcuda.so && \
-RUN   mkdir -p /etc/OpenCL/vendors
-RUN    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
+RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/libcuda.so.1 && \
+    ln -s /usr/lib/libcuda.so.1 /usr/lib/libcuda.so && \
+    mkdir -p /etc/OpenCL/vendors && \
+    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
     echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
     echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
 
 ENV  PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 
+ENV CUDA_BIN_PATH=/usr/local/cuda
 
+ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
+
+
+# AF_DISABLE_GRAPHICS - Environment variable to disable graphics at
+# runtime due to lack of graphics support by docker - visit
+# http://arrayfire.org/docs/configuring_environment.htm#af_disable_graphics
+# for more information
+ENV AF_PATH=/opt/arrayfire AF_DISABLE_GRAPHICS=1
+#ARG COMPILE_GRAPHICS=OFF
 RUN git clone --recursive https://github.com/arrayfire/arrayfire.git -b master && \
-    cd arrayfire && mkdir build && cd build && \
+    cd arrayfire  && mkdir build && cd build && \
     cmake .. -DCMAKE_INSTALL_PREFIX=/opt/arrayfire-3 \
              -DCMAKE_BUILD_TYPE=Release \
              -DBUILD_CPU=ON \
              -DBUILD_CUDA=ON \
-             -DBUILD_OPENCL=ON \
+             -DBUILD_OPENCL=OFF \
              -DBUILD_UNIFIED=ON \
-             -DBUILD_GRAPHICS=ON \
+             -DBUILD_GRAPHICS=OFF \
              -DBUILD_NONFREE=OFF \
              -DBUILD_EXAMPLES=ON \
              -DBUILD_TEST=ON \
@@ -192,13 +200,11 @@ RUN git clone --recursive https://github.com/arrayfire/arrayfire.git -b master &
              -DINSTALL_FORGE_DEV=ON \
              -DUSE_FREEIMAGE_STATIC=OFF && \
              # -DCOMPUTES_DETECTED_LIST="30;35;37;50;52;60" \
-    make -j8 && make install
-
-RUN mkdir -p ${AF_PATH} && ln -s /opt/arrayfire-3/* ${AF_PATH}/
-RUN echo "${AF_PATH}/lib" >> /etc/ld.so.conf.d/arrayfire.conf
-
-RUN echo "/usr/local/cuda/nvvm/lib64" >> /etc/ld.so.conf.d/arrayfire.conf
-RUN ldconfig
+    make -j8 && make install && \
+    mkdir -p ${AF_PATH} && ln -s /opt/arrayfire-3/* ${AF_PATH}/ && \
+    echo "${AF_PATH}/lib" >> /etc/ld.so.conf.d/arrayfire.conf && \
+    echo "/usr/local/cuda/nvvm/lib64" >> /etc/ld.so.conf.d/arrayfire.conf && \
+    ldconfig
 
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 
