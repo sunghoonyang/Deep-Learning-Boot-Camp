@@ -1,10 +1,17 @@
 # All-in-one Jupyter Docker image for GPU Deep Learning using PyCUDA, ArrayFire, CUDA etc. 
 
+This repository includes utilities to build and run my NVIDIA Docker image for **the Deep Learning School**:
+https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
+
 NOTE: Building this image may take several hours since CMAKE is being built from source. 
 https://github.com/QuantScientist/deep-ml-meetups
 
-This repository includes utilities to build and run my NVIDIA Docker image for the Deep Learning School:
-https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
+Also available on docker hub:
+https://hub.docker.com/r/quantscientist/data-science-arrayfire-gpu/
+
+`docker pull quantscientist/data-science-arrayfire-gpu`
+
+
 
 ![cuda](cuda-test1.png)
 
@@ -23,11 +30,18 @@ CUDA toolkit version   | Minimum driver version
   
 ** We use CUDA 8.0. **   
 
-Get the toolkit:
+### Get the toolkit:
 `sudo apt-get install nvidia-cuda-toolkit`
 
-Get nsight IDE:
+### Get nsight IDE:
 `sudo apt-get install nvidia-nsight`
+
+### Install nvidia-docker and nvidia-docker-plugin
+wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
+sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+
+#### Get nvidia docker (requires docker-engine **NOT** docker.io):
+`nvidia-docker run --rm nvidia/cuda nvidia-smi`
 
 
 # Image contents
@@ -52,11 +66,13 @@ A few common libraries used for deep learning
 * Numba
  
 # Build the image
-
+### GPU version
+docker build -t quantscientist/gpu -f Dockerfile.gpu .
+### CPU version
 docker build -t quantscientist/gpu -f Dockerfile.cpu .
 
 # Run the image
-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v /myhome/data-science/:/root/sharedfolder  --env="DISPLAY"  --env="QT_X11_NO_MITSHM=1"  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw"  quantscientist/gpu bash
+docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v /myhome/data-science/:/root/sharedfolder  --env="DISPLAY" quantscientist/gpu bash
 
 
 # Run Jupyter
