@@ -2,10 +2,10 @@
 # Links: PyCUDA 
 
 - [Easy, Effective, Efficient: GPU programming with PyOpenCL and 
-PyCUDA](http://www.bu.edu/pasi/courses/gpu-programming-with-pyopencl-and- 
-pycuda/)
-Einarsson](http://physics.gu.se/~einarssj/teaching/pycuda2012/ 
-PyCUDA_crashcourse2_split.pdf)
+PyCUDA](http://www.bu.edu/pasi/courses/gpu-programming-with-pyopencl-and-pycuda/)
+
+Einarsson](http://physics.gu.se/~einarssj/teaching/pycuda2012/PyCUDA_crashcourse2_split.pdf)
+
 - [GPU Scripting and Code Generation with 
 PyCUDA](http://arxiv.org/pdf/1304.5553.pdf)
 - [Parallel Programming with 
