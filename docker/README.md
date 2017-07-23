@@ -3,6 +3,10 @@
 NOTE: Building this image may take several hours since CMAKE is being built from source. 
 https://github.com/QuantScientist/deep-ml-meetups
 
+Also available on docker hub:
+https://hub.docker.com/r/quantscientist/data-science-arrayfire-gpu/
+docker pull quantscientist/data-science-arrayfire-gpu
+
 This repository includes utilities to build and run my NVIDIA Docker image for the Deep Learning School:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
 
