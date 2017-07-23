@@ -23,6 +23,13 @@ CUDA toolkit version   | Minimum driver version
   
 ** We use CUDA 8.0. **   
 
+Get the toolkit:
+`sudo apt-get install nvidia-cuda-toolkit`
+
+Get nsight IDE:
+`sudo apt-get install nvidia-nsight`
+
+
 # Image contents
 On top of all the fancy deep learning libraries, this docker image contains:
 
