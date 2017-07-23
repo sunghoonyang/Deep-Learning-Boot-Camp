@@ -23,11 +23,18 @@ CUDA toolkit version   | Minimum driver version
   
 ** We use CUDA 8.0. **   
 
-Get the toolkit:
+### Get the toolkit:
 `sudo apt-get install nvidia-cuda-toolkit`
 
-Get nsight IDE:
+### Get nsight IDE:
 `sudo apt-get install nvidia-nsight`
+
+### Install nvidia-docker and nvidia-docker-plugin
+wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
+sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+
+#### Get nvidia docker (requires docker-engine **NOT** docker.io):
+`nvidia-docker run --rm nvidia/cuda nvidia-smi`
 
 
 # Image contents
