@@ -1,5 +1,5 @@
 
-# Links 
+# Links: PyCUDA 
 
 - [Easy, Effective, Efficient: GPU programming with PyOpenCL and 
 PyCUDA](http://www.bu.edu/pasi/courses/gpu-programming-with-pyopencl-and- 
@@ -26,6 +26,7 @@ pyCUDA](http://bredsaal.dk/solving-projecteuler-with-pycuda)
 - [Implementation of pyCUDA - Aditya Atluri 
 ](https://www.youtube.com/watch?v=ETA27VoB6b8)
 
+# Links: Threads, Grids, and Blocks. 
 
 https://stackoverflow.com/questions/14504580/pycuda-blocks-and-grids-to-work-with-big-datas
 
