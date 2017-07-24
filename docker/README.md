@@ -3,7 +3,8 @@
 
 
 # Run the GPU image (see below)
-nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash
+
+`nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash`
 
 This repository includes utilities to build and run my NVIDIA Docker image for **the Deep Learning School**:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
@@ -42,8 +43,8 @@ CUDA toolkit version   | Minimum driver version
 `sudo apt-get install nvidia-nsight`
 
 ### Install nvidia-docker and nvidia-docker-plugin
-wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
-sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb
+`wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb
+sudo dpkg -i /tmp/nvidia-docker*.deb && rm /tmp/nvidia-docker*.deb`
 
 #### Get nvidia docker (requires docker-engine **NOT** docker.io):
 `nvidia-docker run --rm nvidia/cuda nvidia-smi`
@@ -72,25 +73,25 @@ A few common libraries used for deep learning
  
 # Build the image
 ### GPU version
-docker build -t quantscientist/gpu -f Dockerfile.gpu .
+`docker build -t quantscientist/gpu -f Dockerfile.gpu .`
 
 ### CPU version
-docker build -t quantscientist/gpu -f Dockerfile.cpu .
+`docker build -t quantscientist/gpu -f Dockerfile.cpu .`
 
 # Run the GPU image
-nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash
+`nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash`
 
 # Run the GPU image
-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v /myhome/data-science/:/root/sharedfolder  --env="DISPLAY" quantscientist/gpu bash
+`docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v /myhome/data-science/:/root/sharedfolder  --env="DISPLAY" quantscientist/gpu bash`
 
 
 # Run Jupyter
-chmod +x run_jupyter.sh
-./run_jupyter.sh
+`chmod +x run_jupyter.sh
+./run_jupyter.sh`
 
 OR
 
-docker build -t quantscientist/gpu -f Dockerfile.gpu .
+`docker build -t quantscientist/gpu -f Dockerfile.gpu .`
 
 
 # Issues and Contributing
