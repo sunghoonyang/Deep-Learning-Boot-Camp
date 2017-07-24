@@ -139,6 +139,7 @@ RUN make install
 WORKDIR /root
 
 
+
 RUN apt-get install -y libopenblas-dev libfftw3-dev liblapacke-dev   libfreeimage-dev libopenblas-dev libfftw3-dev liblapacke-dev
 
 WORKDIR /root
@@ -147,8 +148,24 @@ WORKDIR /root/curlpp
 RUN cmake .
 RUN make install
 
-RUN apt-get -qyy install build-essential scons pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libfreetype6-dev libssl-dev libudev-dev libxrandr-dev
-RUN pip --no-cache-dir install  cython pytest pandas scikit-learn statsmodels  line-profiler psutil spectrum memory_profiler pandas joblib pyparsing pydot pydot-ng graphviz pandoc SQLAlchemy flask toolz cloudpickle python-snappy s3fs widgetsnbextension ipywidgets terminado cytoolz bcolz blosc partd backports.lzma mock cachey moto pandas_datareader
+RUN apt-get -qyy install build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev  libfreetype6-dev libssl-dev  libxrandr-dev
+
+RUN curl --silent https://bootstrap.pypa.io/get-pip.py | python
+
+RUN pip --no-cache-dir install setuptools==33.1.1
+
+RUN pip --no-cache-dir install \
+		Cython \
+		pycuda werkzeug pillow psycogreen flask celery redis Boto FileChunkIO nltk fuzzywuzzy rotate-backups oauthlib requests pyOpenSSL ndg-httpsclient pyasn1 \
+		path.py \
+		Pillow \
+		pygments \
+		six \
+		sphinx \
+		wheel \
+		zmq
+
+RUN pip --no-cache-dir install cython pytest pandas scikit-learn statsmodels  line-profiler psutil spectrum memory_profiler pandas joblib pyparsing pydot pydot-ng graphviz pandoc SQLAlchemy flask toolz cloudpickle python-snappy s3fs widgetsnbextension ipywidgets terminado cytoolz bcolz blosc partd backports.lzma mock cachey moto
 
 # Install BAYESIAN FRAMEWORKS
 RUN pip --no-cache-dir install  --upgrade watermark xgboost bokeh seaborn mmh3 tensorflow theano
@@ -163,19 +180,6 @@ RUN echo 'alias ll="ls --color=auto -lA"' >> /root/.bashrc \
 && echo '"\e[6~": history-search-forward' >> /root/.inputrc
 
 
-RUN curl --silent https://bootstrap.pypa.io/get-pip.py | python
-RUN pip --no-cache-dir install setuptools==33.1.1
-# Install other useful Python packages using pip
-RUN pip --no-cache-dir install \
-		Cython \
-		pycuda werkzeug pillow psycogreen flask celery redis Boto FileChunkIO nltk fuzzywuzzy rotate-backups oauthlib requests pyOpenSSL ndg-httpsclient pyasn1 \
-		path.py \
-		Pillow \
-		pygments \
-		six \
-		sphinx \
-		wheel \
-		zmq
 
 # Install python2.7
 RUN chmod 777 /tmp && apt-get update && apt-get upgrade -y &&  apt-get install -y \
