@@ -1,5 +1,5 @@
 FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
-MAINTAINER chenmingqiang <chenmingqiang86@gmail.com>
+
 
 # Install python2.7
 RUN chmod 777 /tmp && apt-get update && apt-get upgrade -y &&  apt-get install -y \
