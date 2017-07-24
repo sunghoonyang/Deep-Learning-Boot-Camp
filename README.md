@@ -5,7 +5,7 @@ This repository includes code / utilities for **the Deep Learning School**:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
 
 
-![cuda](cuda-test1.png)
+![cuda](https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/blob/master/docker/cuda-test1.png)
 
 
 ### Requirements
