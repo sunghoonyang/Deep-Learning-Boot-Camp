@@ -1,1 +1,1 @@
-docker build -t quantscientist/pycuda -f Dockerfile.gpu2 .
+nvidia-docker build -t quantscientist/pycuda -f Dockerfile.gpu .
