@@ -1,5 +1,10 @@
 # All-in-one Jupyter Docker image for GPU Deep Learning using PyCUDA, ArrayFire, CUDA etc. 
 
+
+
+# Run the GPU image (see below)
+nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash
+
 This repository includes utilities to build and run my NVIDIA Docker image for **the Deep Learning School**:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
 
@@ -68,10 +73,14 @@ A few common libraries used for deep learning
 # Build the image
 ### GPU version
 docker build -t quantscientist/gpu -f Dockerfile.gpu .
+
 ### CPU version
 docker build -t quantscientist/gpu -f Dockerfile.cpu .
 
-# Run the image
+# Run the GPU image
+nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash
+
+# Run the GPU image
 docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v /myhome/data-science/:/root/sharedfolder  --env="DISPLAY" quantscientist/gpu bash
 
 
