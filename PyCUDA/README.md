@@ -1,4 +1,17 @@
 
+# Intro
+The compute unified device architecture (CUDA) is a heterogeneous sequential-parallel
+programming model and software environment that allows for access to the NVIDIA’s GPU resources
+via so-called kernels. Several programming languages including C/C++, Fortran, and Python are
+supported for written kernels. 
+
+Compared to the other non-scripting languages, Python emphasizes
+quick development and offers a comprehensive mathematics library that has been widely adopted
+by scientific communities.**PyCUDA involves using Python as a wrapper to the CUDA C
+kernels, and features Python’s automatic memory management, error checking, and requires no
+user-visible compilation, which makes it very suitable for interactive testing and quick prototyping in
+our applications.**
+
 # Links: PyCUDA 
 
 - [Easy, Effective, Efficient: GPU programming with PyOpenCL and 
