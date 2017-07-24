@@ -7,6 +7,13 @@ https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
 
 ![cuda](https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/blob/master/docker/cuda-test1.png)
 
+# Intro
+Modern high-performance GPUs such as NVIDIA GeForce GTX1080 provide 2560 computing
+units, whereas in contrast, the contemporary CPU e.g., Intel i7-6900 contains only eight cores.
+In this way, scientific computations such as image processing can be accelerated via a CPU–GPU heterogeneous
+platform in the following way: first, using the host CPU to perform sequential operations including
+image input/output (I/O) and control operations; and second, using the GPU device to solve the
+computational and memory-intensive problems.
 
 ### Requirements
 - Ubuntu Linux 16.04
