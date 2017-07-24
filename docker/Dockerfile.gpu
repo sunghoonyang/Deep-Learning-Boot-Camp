@@ -1,8 +1,4 @@
-#FROM ubuntu:16.04
-#FROM ubuntu:trusty
-#FROM nvidia/cuda:8.0-devel-ubuntu16.04
-
-FROM nvidia/cuda:8.0-cudnn5-runtime-ubuntu16.04
+FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 
 MAINTAINER Shlomo <shlomo@deep-ml.com>
 
@@ -18,7 +14,6 @@ RUN apt-get clean
 ENV DEBIAN_FRONTEND noninteractive
 
 
-#Install dependencies
 RUN apt-get update && apt-get install --no-install-recommends  -y \
     git cmake build-essential libgoogle-glog-dev libgflags-dev libeigen3-dev libopencv-dev libcppnetlib-dev libboost-dev libboost-iostreams-dev libcurl4-openssl-dev protobuf-compiler libopenblas-dev libhdf5-dev libprotobuf-dev libleveldb-dev libsnappy-dev liblmdb-dev libutfcpp-dev wget unzip  \
     python \
@@ -143,62 +138,8 @@ RUN make install
 
 WORKDIR /root
 
-# Build GLFW from source
-RUN git clone https://github.com/glfw/glfw.git && \
-    cd glfw && \
-    mkdir build && \
-    cd build && \
-    cmake -DCMAKE_INSTALL_PREFIX=/usr .. && \
-    make -j4 && \
-make install
 
 RUN apt-get install -y libopenblas-dev libfftw3-dev liblapacke-dev   libfreeimage-dev libopenblas-dev libfftw3-dev liblapacke-dev
-
-WORKDIR /root
-
-
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-core-$CUDA_PKG_VERSION \
-        cuda-misc-headers-$CUDA_PKG_VERSION \
-        cuda-command-line-tools-$CUDA_PKG_VERSION \
-        cuda-nvrtc-dev-$CUDA_PKG_VERSION \
-        cuda-nvml-dev-$CUDA_PKG_VERSION \
-        cuda-nvgraph-dev-$CUDA_PKG_VERSION \
-        cuda-cusolver-dev-$CUDA_PKG_VERSION \
-        cuda-cublas-dev-8-0=8.0.61.2-1 \
-        cuda-cufft-dev-$CUDA_PKG_VERSION \
-        cuda-curand-dev-$CUDA_PKG_VERSION \
-        cuda-cusparse-dev-$CUDA_PKG_VERSION \
-        cuda-npp-dev-$CUDA_PKG_VERSION \
-        cuda-cudart-dev-$CUDA_PKG_VERSION \
-        cuda-driver-dev-$CUDA_PKG_VERSION && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs:${LIBRARY_PATH}
-
-
-RUN apt-get install -y nvidia-cuda-dev nvidia-cuda-toolkit
-
-#CMake CUDA Variable CUDA_CUDA_LIBRARY Not found
-ENV CUDA_LIB_PATH=/usr/local/cuda/lib64/stubs/
-ENV  PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-
-RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/libcuda.so.1 && \
-    ln -s /usr/lib/libcuda.so.1 /usr/lib/libcuda.so && \
-    mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd && \
-    echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
-    echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
-
-ENV  PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV CUDA_BIN_PATH=/usr/local/cuda
-ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
-
-
-RUN ldconfig
-
-ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 
 WORKDIR /root
 RUN git clone https://github.com/jpbarrette/curlpp.git
@@ -206,49 +147,22 @@ WORKDIR /root/curlpp
 RUN cmake .
 RUN make install
 
-RUN echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty main \n\
-deb-src http://llvm.org/apt/trusty/ llvm-toolchain-trusty main \n\
-deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.7 main \n\
-deb-src http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.7 main" >> /etc/apt/sources.list
+RUN apt-get -qyy install build-essential scons pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libfreetype6-dev libssl-dev libudev-dev libxrandr-dev
+RUN pip --no-cache-dir install  cython pytest pandas scikit-learn statsmodels  line-profiler psutil spectrum memory_profiler pandas joblib pyparsing pydot pydot-ng graphviz pandoc SQLAlchemy flask toolz cloudpickle python-snappy s3fs widgetsnbextension ipywidgets terminado cytoolz bcolz blosc partd backports.lzma mock cachey moto pandas_datareader
 
-RUN wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | apt-key add -
+# Install BAYESIAN FRAMEWORKS
+RUN pip --no-cache-dir install  --upgrade watermark xgboost bokeh seaborn mmh3 tensorflow theano
 
-RUN apt-get update && apt-get install -y clang-3.7 libclang-common-3.7-dev libclang-3.7-dev libclang1-3.7  libllvm-3.7-ocaml-dev libllvm3.7 lldb-3.7 llvm-3.7 llvm-3.7-dev llvm-3.7-runtime clang-modernize-3.7 clang-format-3.7 lldb-3.7-dev
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ENV KERAS_VERSION=1.2.2
+ENV KERAS_BACKEND=tensorflow
+RUN pip --no-cache-dir install --no-dependencies git+https://github.com/fchollet/keras.git@${KERAS_VERSION}
 
-RUN echo "/usr/lib/llvm-3.7/lib/" >> /etc/ld.so.conf && ldconfig
-
-
-ENV LD_LIBRARY_PATH /usr/lib/llvm-3.7/lib/
-ENV LLVM_CONFIG /usr/lib/llvm-3.7/bin/llvm-config
-
-RUN apt-get update -qq \
- && apt-get install --no-install-recommends -y \
-    # install python 3
-    build-essential \
-    clang-3.7 \
-    lldb-3.7 \
-    llvm-3.7 \
-    python-clang-3.7 \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+# configure console
+RUN echo 'alias ll="ls --color=auto -lA"' >> /root/.bashrc \
+&& echo '"\e[5~": history-search-backward' >> /root/.inputrc \
+&& echo '"\e[6~": history-search-forward' >> /root/.inputrc
 
 
-RUN echo "deb http://ppa.launchpad.net/keithw/glfw3/ubuntu trusty main" |  tee -a /etc/apt/sources.list.d/fillwave_ext.list
-RUN echo "deb-src http://ppa.launchpad.net/keithw/glfw3/ubuntu trusty main" | tee -a /etc/apt/sources.list.d/fillwave_ext.list
-
-RUN apt-get update
-
-RUN apt-get install -qqy --force-yes libglfw3 libglfw3-dev
-
-
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/lib/llvm-3.7/lib/:/usr/local/lib/
-ENV LIBRARY_PATH $LIBRARY_PATH:$LD_LIBRARY_PATH:/usr/lib/llvm-3.7/lib/:/usr/local/lib/
-ENV LLVM_CONFIG /usr/lib/llvm-3.7/bin/llvm-config
-
-
-####################################################PYTHON2########################################################
 RUN curl --silent https://bootstrap.pypa.io/get-pip.py | python
 RUN pip --no-cache-dir install setuptools==33.1.1
 # Install other useful Python packages using pip
@@ -263,51 +177,109 @@ RUN pip --no-cache-dir install \
 		wheel \
 		zmq
 
-ENV LD_LIBRARY_PATH /usr/lib/llvm-3.7/lib/
-ENV LLVM_CONFIG /usr/lib/llvm-3.7/bin/llvm-config
+# Install python2.7
+RUN chmod 777 /tmp && apt-get update && apt-get upgrade -y &&  apt-get install -y \
+    build-essential \
+    ca-certificates \
+    wget \
+    git \
+    unzip \
+    cmake \
+    curl \
+    vim \
+    python2.7 \
+    python2.7-dev \
+    python-pip \
+    pkg-config \
+    libgtk2.0-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libtbb2 \
+    libtbb-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libjasper-dev \
+    libdc1394-22-dev \
+    && apt-get autoremove \
+    && apt-get clean
 
-RUN apt-get -qyy install build-essential scons pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libfreetype6-dev libssl-dev libudev-dev libxrandr-dev
+# Install NCCL for multi-GPU communication
+RUN wget https://github.com/NVIDIA/nccl/releases/download/v1.2.3-1%2Bcuda8.0/libnccl1_1.2.3-1.cuda8.0_amd64.deb && \
+  dpkg -i libnccl1_1.2.3-1.cuda8.0_amd64.deb && \
+  rm libnccl1_1.2.3-1.cuda8.0_amd64.deb && \
+  wget https://github.com/NVIDIA/nccl/releases/download/v1.2.3-1%2Bcuda8.0/libnccl-dev_1.2.3-1.cuda8.0_amd64.deb && \
+  dpkg -i libnccl-dev_1.2.3-1.cuda8.0_amd64.deb && \
+  rm libnccl-dev_1.2.3-1.cuda8.0_amd64.deb
 
-RUN pip --no-cache-dir install  cython pytest pandas scikit-learn statsmodels  line-profiler psutil spectrum memory_profiler pandas joblib pyparsing pydot pydot-ng graphviz pandoc SQLAlchemy flask toolz cloudpickle python-snappy s3fs widgetsnbextension ipywidgets terminado cytoolz bcolz blosc partd backports.lzma mock cachey moto pandas_datareader
-RUN pip install -i https://pypi.anaconda.org/sklam/simple llvmlite
-RUN pip --no-cache-dir install fastparquet
+WORKDIR /
+RUN pip install --upgrade pip && pip install numpy
+RUN wget https://github.com/opencv/opencv/archive/3.2.0.zip -O opencv3.zip && \
+    unzip -q opencv3.zip && mv /opencv-3.2.0 /opencv
+RUN wget https://github.com/opencv/opencv_contrib/archive/3.2.0.zip -O opencv_contrib3.zip && \
+    unzip -q opencv_contrib3.zip && mv /opencv_contrib-3.2.0 /opencv_contrib
+RUN mkdir /opencv/build
+WORKDIR /opencv/build
+RUN cmake -D CMAKE_BUILD_TYPE=RELEASE \
+    -D BUILD_PYTHON_SUPPORT=ON \
+    -D CMAKE_INSTALL_PREFIX=/usr/local \
+    -D INSTALL_C_EXAMPLES=OFF \
+    -D INSTALL_PYTHON_EXAMPLES=ON \
+    -D OPENCV_EXTRA_MODULES_PATH=/opencv_contrib/modules \
+    -D BUILD_EXAMPLES=ON \
+    -D BUILD_NEW_PYTHON_SUPPORT=OFF \
+    -D WITH_IPP=OFF \
+    -D WITH_QT=OFF \
+    -D CUDA_CUDA_LIBRARY=/usr/local/cuda-8.0/targets/x86_64-linux/lib/stubs/libcuda.so \
+    -D WITH_V4L=ON ..
+RUN make -j4 && make install && ldconfig
+RUN cd / && rm -rf /opencv /opencv_contrib
 
-# Install Theano and set up Theano config (.theanorc) OpenBLAS
-RUN pip --no-cache-dir install theano && \
-	\
-	echo "[global]\ndevice=cpu\nfloatX=float32\nmode=FAST_RUN \
-		\n[lib]\ncnmem=0.95 \
-		\n[nvcc]\nfastmath=True \
-		\n[blas]\nldflag = -L/usr/lib/openblas-base -lopenblas \
-		\n[DebugMode]\ncheck_finite=1" \
-	> /root/.theanorc
+# Install caffe dependencies
+RUN apt-get install -y \
+  libatlas-base-dev \
+  libatlas-dev \
+  libboost-all-dev \
+  libprotobuf-dev \
+  libgoogle-glog-dev \
+  libgflags-dev \
+  protobuf-compiler \
+  libhdf5-dev \
+  libleveldb-dev \
+  liblmdb-dev \
+  libsnappy-dev \
+  # python-numpy \
+  gfortran > /dev/null
 
 
-# Install BAYESIAN FRAMEWORKS
-RUN pip --no-cache-dir install  --upgrade watermark xgboost bokeh seaborn mmh3 tensorflow theano
+# Clone Caffe repo and move into it
+# Install python dependencies
+RUN  cd /root && git clone https://github.com/BVLC/caffe.git && cd caffe && \
+	cat python/requirements.txt | xargs -n1 pip install && pip install -v thrift==0.9.3
 
-ENV KERAS_VERSION=1.2.2
-ENV KERAS_BACKEND=tensorflow
-RUN pip --no-cache-dir install --no-dependencies git+https://github.com/fchollet/keras.git@${KERAS_VERSION}
+RUN cd /root/caffe && \
+# Make and move into build directory
+  mkdir build && cd build && \
+# CMake
+  cmake .. && \
+# Make
+  make -j"$(nproc)" all && \
+  make install
 
-####################################################PYTHON2########################################################
+# Add to Python path
+ENV PYTHONPATH=/root/caffe/python:$PYTHONPATH
 
+# Add caffe to path
+ENV PATH=/root/caffe/build/tools:$PATH
 
-# configure console
-RUN echo 'alias ll="ls --color=auto -lA"' >> /root/.bashrc \
- && echo '"\e[5~": history-search-backward' >> /root/.inputrc \
- && echo '"\e[6~": history-search-forward' >> /root/.inputrc
+# Set ~/caffe as working directory
+WORKDIR /root/caffe
 
-# RUN which python2.7 /usr/bin/python2.7
-RUN ls -la /usr/bin/python2.7
+RUN apt-get install -y supervisor
 
-RUN ln -s /opt/python2.7/lib/python2.7/config/libpython2.7.a /usr/local/lib/
+RUN pip install pycuda
 
-ENV LDFLAGS="-L/opt/python2.7/lib:usr/lib/openblas-base/"
-ENV PATH /usr/lib/openblas-base/:/usr/lib/openblas-base/bin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:.
-
-
-# Set up notebook config
 
 RUN apt-get -qyy install python2.7 python-pip python-dev ipython ipython-notebook
 RUN pip install --upgrade pip
@@ -333,19 +305,10 @@ RUN apt-get update
 
 ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/root
 
-ENV PATH=/usr/local/cuda-8.0/bin:$PATH
-ENV LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-ENV CUDA_BIN_PATH=/usr/local/cuda
-ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
-
-
 RUN apt-get install -qqy libsasl2-dev libldap2-dev libssl-dev libpq-dev
-RUN pip install pycuda bayesian-optimization scikit-neuralnetwork pycuda
+RUN pip install pycuda bayesian-optimization scikit-neuralnetwork
 
 
 # Expose Ports for TensorBoard (6006), Ipython (8888) drill
 EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432
 RUN  apt-get -qqy  install mesa-common-dev freeglut3-dev libglfw-dev libglm-dev libglew1.6-dev xorg-dev libglu1-mesa-dev  libsdl2-dev
-
