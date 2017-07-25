@@ -240,7 +240,7 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV CUDA_BIN_PATH=/usr/local/cuda
 ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
 
-RUN pip install -v scikit-learn==0.18  pycuda && apt-get install -y supervisor  && pip install opencv-python pycrypto
+RUN pip install -v scikit-learn==0.18  pycuda && pip install opencv-python pycrypto
 
 
 RUN pip install --upgrade ipython
