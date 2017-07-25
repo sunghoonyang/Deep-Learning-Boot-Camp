@@ -73,7 +73,7 @@ A few common libraries used for deep learning
  
 # Build the image
 ### GPU version
-`docker build -t quantscientist/gpu -f Dockerfile.gpu .`
+`docker build -t quantscientist/gpu -f Dockerfile.gpu3 .`
 
 ### CPU version
 `docker build -t quantscientist/gpu -f Dockerfile.cpu .`
