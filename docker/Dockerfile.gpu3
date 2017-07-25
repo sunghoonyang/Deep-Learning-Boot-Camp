@@ -256,8 +256,8 @@ WORKDIR "/root/"
 RUN chmod +x run_jupyter.sh
 RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/root
-RUN apt-get install -qqy libsasl2-dev libldap2-dev libssl-dev libpq-dev
+#ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/root
+
 
 # Expose Ports for TensorBoard (6006), Ipython (8888) drill
 EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432
