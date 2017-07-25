@@ -224,7 +224,7 @@ RUN pip --no-cache-dir install numpy pandas sklearn matplotlib seaborn jupyter p
 RUN pip install git+https://github.com/fchollet/keras.git
 
 # CNTK
-RUN pip install https://cntk.ai/PythonWheel/GPU/cntk-2.0-cp35-cp35m-linux_x86_64.whl
+#RUN pip install https://cntk.ai/PythonWheel/GPU/cntk-2.0-cp35-cp35m-linux_x86_64.whl
 
 
 # Add caffe to path
@@ -232,6 +232,13 @@ ENV PATH=/root/caffe/build/tools:$PATH
 
 # Set ~/caffe as working directory
 WORKDIR /root/caffe
+
+ENV PATH=/usr/local/cuda-8.0/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
+ENV CUDA_BIN_PATH=/usr/local/cuda
+ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
 
 RUN pip install -v scikit-learn==0.18  pycuda && apt-get install -y supervisor  && pip install opencv-python pycrypto
 
