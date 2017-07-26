@@ -32,7 +32,6 @@ See https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/tree/master/doc
 
 # Relevant info:
 
-![](image085.jpg)
 https://github.com/arrayfire/arrayfire-project-templates
 
 https://github.com/arrayfire/arrayfire
