@@ -8,7 +8,7 @@ RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean
 
 RUN apt-get update && apt-get install --no-install-recommends  -y \
-    git cmake build-essential libgoogle-glog-dev libgflags-dev libeigen3-dev libopencv-dev libcppnetlib-dev libboost-dev libboost-iostreams-dev libcurl4-openssl-dev protobuf-compiler libopenblas-dev libhdf5-dev libprotobuf-dev libleveldb-dev libsnappy-dev liblmdb-dev libutfcpp-dev wget unzip  \
+    git cmake build-essential libgoogle-glog-dev libgflags-dev libeigen3-dev libopencv-dev libcppnetlib-dev libboost-dev libboost-all-dev libboost-iostreams-dev libcurl4-openssl-dev protobuf-compiler libopenblas-dev libhdf5-dev libprotobuf-dev libleveldb-dev libsnappy-dev liblmdb-dev libutfcpp-dev wget unzip  \
     python \
     python-dev \
     python2.7-dev \
@@ -92,7 +92,6 @@ RUN apt-get update && apt-get install --no-install-recommends  -y \
         htop \
         procps \
         vim-tiny \
-        libboost-dev \
         libgraphviz-dev \
 		&& \
 	apt-get clean && \
@@ -107,7 +106,6 @@ RUN apt-get update && apt-get install -y software-properties-common && \
         clinfo \
         cmake \
         git \
-        libboost-all-dev \
         libfftw3-dev \
         libfontconfig1-dev \
         libfreeimage-dev \
@@ -132,7 +130,6 @@ RUN chmod 777 /tmp && apt-get update && apt-get install -y \
   vim \
   libatlas-base-dev \
   libatlas-dev \
-  libboost-all-dev \
   libopencv-dev \
   libprotobuf-dev \
   libgoogle-glog-dev \
@@ -160,7 +157,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         cmake \
         git \
-        libboost-all-dev \
         libgflags-dev \
         libgoogle-glog-dev \
         libprotobuf-dev \
