@@ -144,13 +144,13 @@ RUN chmod 777 /tmp && apt-get update && apt-get install -y \
   python-numpy \
   gfortran > /dev/null
 
-RUN apt-get -qyy install python2.7 python-pip python-dev ipython ipython-notebook
+WORKDIR /
+
+RUN apt-get -qyy install python2.7 python-pip python-dev
 RUN pip install --upgrade pip
+RUN pip install numpy
 
 ##################################################
-
-WORKDIR /
-RUN pip install --upgrade pip && pip install numpy
 
 # Install dependencies.
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -165,6 +165,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python-yaml \
         wget && \
     rm -rf /var/lib/apt/lists/*
+
+
+RUN pip --no-cache-dir install numpy pandas sklearn matplotlib seaborn ipython ipython-notebook jupyter pyyaml h5py ipykernel
+
 
 # Install OpenCV 3.2.0 with CUDA support
 RUN git clone --depth 1 -b 3.2.0 https://github.com/Itseez/opencv.git /opencv && \
@@ -196,7 +200,6 @@ RUN wget https://github.com/NVIDIA/nccl/releases/download/v1.2.3-1%2Bcuda8.0/lib
 
 
 # Clone Caffe repo and move into it
-# Install python dependencies
 RUN  cd /root && git clone https://github.com/BVLC/caffe.git && cd caffe && \
 	cat python/requirements.txt | xargs -n1 pip install && pip install -v thrift==0.9.3
 
@@ -211,24 +214,15 @@ RUN cd /root/caffe && \
 
 # Add to Python path
 ENV PYTHONPATH=/root/caffe/python:$PYTHONPATH
-
-RUN pip --no-cache-dir install --upgrade pip
-RUN pip --no-cache-dir install tensorflow-gpu
-RUN pip --no-cache-dir install numpy pandas sklearn matplotlib seaborn jupyter pyyaml h5py ipykernel
-
-# Keras
-RUN pip install git+https://github.com/fchollet/keras.git
-
-# CNTK
-#RUN pip install https://cntk.ai/PythonWheel/GPU/cntk-2.0-cp35-cp35m-linux_x86_64.whl
-
-
-
 # Add caffe to path
 ENV PATH=/root/caffe/build/tools:$PATH
 
-# Set ~/caffe as working directory
-WORKDIR /root/caffe
+RUN pip --no-cache-dir install tensorflow-gpu
+# Keras
+RUN pip install git+https://github.com/fchollet/keras.git
+
+
+WORKDIR /root/
 
 ENV PATH=/usr/local/cuda-8.0/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
@@ -237,11 +231,10 @@ ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
 ENV CUDA_BIN_PATH=/usr/local/cuda
 ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
 
-RUN pip install -v scikit-learn==0.18  pycuda && pip install opencv-python pycrypto
 
 
-RUN pip install --upgrade ipython
-RUN pip --no-cache-dir install jupyter
+RUN pip install -v scikit-learn==0.18  pycuda && pip install opencv-python pycrypto  astropy
+
 RUN python -m ipykernel.kernelspec
 RUN python2 -m ipykernel.kernelspec --user
 RUN jupyter notebook --allow-root --generate-config -y
@@ -255,7 +248,6 @@ RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
 #ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/root
 
-
-# Expose Ports for TensorBoard (6006), Ipython (8888) drill
+# Expose Ports
 EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432
 
