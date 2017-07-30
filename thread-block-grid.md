@@ -53,3 +53,6 @@ In the kernel the pixel (i,j) to be processed by a thread is calculated this way
 
 uint i = (blockIdx.x * blockDim.x) + threadIdx.x;
 uint j = (blockIdx.y * blockDim.y) + threadIdx.y;
+
+
+http://on-demand.gputechconf.com/gtc-express/2011/presentations/StreamsAndConcurrencyWebinar.pdf
