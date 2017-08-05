@@ -2,7 +2,9 @@
 
 
 
-## Run the GPU image (see below)
+## Build and Run the GPU image (see below for more info)
+
+`docker build -t quantscientist/gpu -f Dockerfile.gpu3 .`
 
 `nvidia-docker run -it -p 5555:5555 -p 7842:7842 -p 8787:8787 -p 8786:8786 -p 8788:8788 -v ~/db/Dropbox/dev2/:/root/sharedfolder  quantscientist/pycuda bash`
 
