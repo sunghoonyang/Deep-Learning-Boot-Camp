@@ -1,4 +1,4 @@
-# All-in-one Jupyter Docker image for GPU Deep Learning using PyCUDA, ArrayFire, CUDA etc. 
+# All-in-one Jupyter Docker image for GPU Deep Learning using PyCUDA, PyTORCH, CUDA etc. 
 
 
 
