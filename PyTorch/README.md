@@ -5,7 +5,7 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 
 Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.
 
-#Jupyter Notebooks
+# Jupyter Notebooks
 - 01 
 - 02 
 - 03 
