@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+apt-get install nvidia-modprobe
+
 # curl -O -s https://raw.githubusercontent.com/minimaxir/keras-cntk-docker/master/deps_nvidia_docker.sh
 if lspci | grep -i 'nvidia'
 then

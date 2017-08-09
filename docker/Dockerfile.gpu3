@@ -167,7 +167,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 
-RUN pip --no-cache-dir install numpy pandas sklearn matplotlib seaborn ipython ipython-notebook jupyter pyyaml h5py ipykernel
+RUN pip --no-cache-dir install numpy pandas sklearn matplotlib seaborn ipython jupyter pyyaml h5py ipykernel
 
 
 # Install OpenCV 3.2.0 with CUDA support
@@ -234,6 +234,29 @@ ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
 
 
 RUN pip install -v scikit-learn==0.18  pycuda && pip install opencv-python pycrypto  astropy
+
+# Torch
+
+# Build PyTorch from source
+RUN git clone https://github.com/pytorch/pytorch.git \
+ && cd pytorch \
+ && git checkout 4eb448a051a1421de1dda9bd2ddfb34396eb7287 \
+ && TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1+PTX" \
+    TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
+    python setup.py install \
+ && rm -rf pytorch
+
+# Build torch-vision from source
+RUN git clone https://github.com/pytorch/vision.git \
+ && cd vision \
+ && git checkout 83263d8571c9cdd46f250a7986a5219ed29d19a1 \
+ && python setup.py install \
+ && rm -rf vision
+
+
+# Install Torchnet, a high-level framework for PyTorch
+RUN pip install git+https://github.com/pytorch/tnt.git@master
+
 
 RUN python -m ipykernel.kernelspec
 RUN python2 -m ipykernel.kernelspec --user
