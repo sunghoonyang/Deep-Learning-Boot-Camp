@@ -1,5 +1,11 @@
 
-# PyTorch
+# Deep Learning Bootcamp November 2017, GPU Computing for Data Scientists: PyTorch
+
+Web: https://www.meetup.com/Tel-Aviv-Deep-Learning-Bootcamp/events/241762893/
+
+Notebooks: <a href="https://github.com/QuantScientist/Data-Science-PyCUDA-GPU"> On GitHub</a>
+
+*Shlomo Kashani*
 
 ![pytorch-logo-flat.png](pytorch-logo-flat.png)
 
