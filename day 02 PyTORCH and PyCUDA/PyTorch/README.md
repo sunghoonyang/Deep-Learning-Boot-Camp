@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-<br>
+
 # Deep Learning Bootcamp November 2017, GPU Computing for Data Scientists: PyTorch
 
 Web: https://www.meetup.com/Tel-Aviv-Deep-Learning-Bootcamp/events/241762893/
@@ -13,7 +13,6 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 
 ***Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.***
 
-<br/>
 
 ## Table of Contents
 
