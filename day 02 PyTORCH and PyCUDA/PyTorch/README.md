@@ -1,25 +1,44 @@
+<p align="center"><img width="40%" src="images/pt.png" /></p>
 
+--------------------------------------------------------------------------------
+
+<br>
 # Deep Learning Bootcamp November 2017, GPU Computing for Data Scientists: PyTorch
 
 Web: https://www.meetup.com/Tel-Aviv-Deep-Learning-Bootcamp/events/241762893/
 
 Notebooks: <a href="https://github.com/QuantScientist/Data-Science-PyCUDA-GPU"> On GitHub</a>
 
-*Shlomo Kashani*
-
-![pytorch-logo-flat.png](pytorch-logo-flat.png)
-
 PyTorch is an optimized tensor library for Deep Learning, and is a recent newcomer to the growing list of GPU programming frameworks available in Python. Like other frameworks it offers efficient tensor representations and is agnostic to the underlying hardware. However, unlike other frameworks it allows you to create “define-by-run” neural networks resulting in dynamic computation graphs, where every single iteration can be different—opening up a whole new world of possibilities. Central to all neural networks in PyTorch is the Autograd package, which performs Algorithmic Differentiation on the defined model and generates the required gradients at each iteration.
 
-Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.
+***Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.***
 
-# Jupyter Notebooks
+<br/>
+
+## Table of Contents
+
+#### Jupyter Notebooks
 - 01 
 - 02 
 - 03 
 - 04 
 - 05 
-- 06 
+- 06
+- 07
+- 08
+
+<br/>
+
+## How to get started
+```bash
+$ git clone https://github.com/QuantScientist/Data-Science-PyCUDA-GPU/tree/master/docker
+```
+
+<br/>
+
+## Author
+Shlomo Kashani/ [@QuantScientist](https://github.com/QuantScientist)
+
 
 # A very comprehensice list of PyTorch links:
 
