@@ -23,6 +23,10 @@ Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear alg
 
 # A very comprehensice list of PyTorch links:
 
+* [Deep Learning with PyTorch: A 60-minute Blitz](https://github.com/pytorch/tutorials/blob/master/Deep%20Learning%20with%20PyTorch.ipynb)
+* [Deep Learning For NLP in PyTorch](https://github.com/rguthrie3/DeepLearningForNLPInPytorch)
+* [Practical PyTorch](https://github.com/spro/practical-pytorch)
+
 https://github.com/ritchieng/the-incredible-pytorch/blob/master/README.md
 
 https://github.com/Cadene/pretrained-models.pytorch
