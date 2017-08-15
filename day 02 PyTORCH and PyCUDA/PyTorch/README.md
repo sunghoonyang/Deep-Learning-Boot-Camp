@@ -2,6 +2,15 @@
 
 --------------------------------------------------------------------------------
 
+The slides were created using:
+`
+%%bash
+jupyter nbconvert \
+    --to=slides \
+    --reveal-prefix=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.2.0/ \
+    --output=py05.html \
+    './05 PyTorch Automatic differentiation.ipynb'
+`
 
 # Deep Learning Bootcamp November 2017, GPU Computing for Data Scientists: PyTorch
 
