@@ -2,7 +2,8 @@
 
 --------------------------------------------------------------------------------
 
-The slides were created using:
+### The slides were created using:
+
 `
 %%bash
 jupyter nbconvert \
