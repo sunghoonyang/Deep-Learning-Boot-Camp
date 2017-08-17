@@ -39,8 +39,17 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 <br/>
 
 ## How to get started
+
+### GPU
 ```bash
 $ git clone https://github.com/QuantScientist/Data-Science-PyCUDA-GPU/tree/master/docker
+```
+
+### CPU
+```
+!pip install http://download.pytorch.org/whl/cu75/torch-0.2.0.post1-cp27-cp27mu-manylinux1_x86_64.whl
+!pip install torchvision 
+
 ```
 
 <br/>
