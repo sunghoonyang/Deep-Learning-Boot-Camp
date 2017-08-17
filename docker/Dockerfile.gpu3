@@ -233,7 +233,7 @@ ENV CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
 
 
 
-RUN pip install -v scikit-learn==0.18  pycuda && pip install opencv-python pycrypto  astropy
+RUN pip install -v scikit-learn==0.18  pycuda && pip install opencv-python pycrypto  astropy autograd
 
 # Torch
 
@@ -272,5 +272,5 @@ RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 #ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/root
 
 # Expose Ports
-EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432
+EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432 8000
 
