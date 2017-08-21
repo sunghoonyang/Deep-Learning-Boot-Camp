@@ -8,7 +8,7 @@ Rrgistration:
 https://www.eventbrite.com/e/5-day-deep-learning-bootcamp-november-2017-als-fund-raising-tickets-37001430274 
 
 
-![cuda](https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/blob/master/docker/cuda-test1.png)
+![cuda](bootcamp.jpg)
 
 # Agenda:
 
@@ -28,4 +28,5 @@ See https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/tree/master/doc
 
 # Relevant info:
 
+http://deep-ml.com/assets/5daydeep/#/3/1
 
