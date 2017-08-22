@@ -17,6 +17,9 @@ jupyter nbconvert \
 
 Web: https://www.meetup.com/Tel-Aviv-Deep-Learning-Bootcamp/events/241762893/
 
+https://www.meetup.com/Tel-Aviv-Deep-Learning-Bootcamp/events/242418339/
+
+
 Notebooks: <a href="https://github.com/QuantScientist/Data-Science-PyCUDA-GPU"> On GitHub</a>
 
 PyTorch is an optimized tensor library for Deep Learning, and is a recent newcomer to the growing list of GPU programming frameworks available in Python. Like other frameworks it offers efficient tensor representations and is agnostic to the underlying hardware. However, unlike other frameworks it allows you to create “define-by-run” neural networks resulting in dynamic computation graphs, where every single iteration can be different—opening up a whole new world of possibilities. Central to all neural networks in PyTorch is the Autograd package, which performs Algorithmic Differentiation on the defined model and generates the required gradients at each iteration.
@@ -51,8 +54,73 @@ $ git clone https://github.com/QuantScientist/Data-Science-PyCUDA-GPU/tree/maste
 !pip install torchvision 
 
 ```
-
 <br/>
+
+
+# Workshop Agenda:
+
+#### Module 1 Getting Started  
+
+- What is Pytorch
+
+- Install and Run Pytorch
+
+- Allocating CPU Tensors using PyTorch
+
+- Allocating GPU Tensors using PyTorch 
+
+
+
+#### Module 2 Basic Pytorch Operations
+
+- Tensor Operation
+
+- Numpy Bridge
+
+- Variable
+
+- Gradients and Autograd
+
+
+
+#### Module 3 Data Pre-processing
+
+- Install and Run Torchvision
+
+- Datasets
+
+- Data Transformation
+
+
+#### Module 4 Linear/Logistic Regression with Pytorch
+
+- Loss Function 
+
+- Optimizer
+
+- Training
+
+#### Module 5 Neural Network (NN) with Pytorch
+
+- What is Neural Network 
+
+- Activation Functions
+
+- Deep Neural Network with Pytorch
+
+
+#### Module 7 Convolutional Neural Network (CNN) with Pytorch
+
+- What is CNN?
+
+- CNN Architecture
+
+- Convolution 
+
+- Pooling and Stride
+
+- Dropout
+
 
 ## Author
 Shlomo Kashani/ [@QuantScientist](https://github.com/QuantScientist)
