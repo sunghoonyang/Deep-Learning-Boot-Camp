@@ -1,5 +1,5 @@
 
-# Deep Learning Winter School: TensorFlow Tel-Aviv meetup. 
+# Deep Learning Winter School: Deep Learning Bootcamp Tel-Aviv meetup. 
 
 This repository includes code / utilities for **the Deep Learning School**:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
