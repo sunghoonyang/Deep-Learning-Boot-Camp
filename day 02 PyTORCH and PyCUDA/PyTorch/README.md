@@ -27,17 +27,8 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 ***Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.***
 
 
-## Table of Contents
+## Jupyter Notebooks
 
-#### Jupyter Notebooks
-- 01 
-- 02 
-- 03 
-- 04 
-- 05 
-- 06
-- 07
-- 08
 
 <br/>
 
@@ -55,7 +46,6 @@ $ git clone https://github.com/QuantScientist/Data-Science-PyCUDA-GPU/tree/maste
 
 ```
 <br/>
-
 
 # Workshop Agenda:
 
