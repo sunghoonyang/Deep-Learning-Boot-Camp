@@ -1,5 +1,6 @@
 
-<p align="center"><img width="40%" src="../images/pt.jpg" /></p>
+![pytorch](../images/pt.jpg)
+
 --------------------------------------------------------------------------------
 
 ### The slides were created using:
