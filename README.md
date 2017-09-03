@@ -1,7 +1,9 @@
 
 # Deep Learning Winter School: Deep Learning Bootcamp Tel-Aviv meetup. 
 
-This repository includes code / utilities for **the Deep Learning School**:
+![cuda](bootcamp.jpg)
+
+This repository includes code / utilities for **the Deep Learning School** (deep-ml.com):
 
 #### Presentation:
 http://deep-ml.com/assets/5daydeep/#/3/1
@@ -12,16 +14,6 @@ https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
 #### Registration:
 https://www.eventbrite.com/e/5-day-deep-learning-bootcamp-november-2017-als-fund-raising-tickets-37001430274 
 
-
-![cuda](bootcamp.jpg)
-
-# Agenda:
-
-### day 1
-### day 2
-### day 3
-### day 4
-### day 5
 
 
 ### Requirements
