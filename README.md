@@ -1,5 +1,5 @@
 
-# Deep Learning Winter School: Tel Aciv Deep Learning Bootcamp : http://deep-ml.com. 
+# Deep Learning Winter School: Tel Aviv Deep Learning Bootcamp : http://deep-ml.com. 
 
 ![cuda](bootcamp.jpg)
 
