@@ -3,17 +3,6 @@
 
 --------------------------------------------------------------------------------
 
-### The slides were created using:
-
-`
-%%bash
-jupyter nbconvert \
-    --to=slides \
-    --reveal-prefix=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.2.0/ \
-    --output=py05.html \
-    './05 PyTorch Automatic differentiation.ipynb'
-`
-
 # Deep Learning Bootcamp November 2017, GPU Computing for Data Scientists: PyTorch
 
 Web: https://www.meetup.com/Tel-Aviv-Deep-Learning-Bootcamp/events/241762893/
@@ -27,26 +16,46 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 
 ***Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.***
 
+## *Jupyter Notebooks*
 
-## Jupyter Notebooks
+This repo contains the *PyTorch* implementations of *various Deep Learning Algorithms*.  
+*Jupyter Notebooks* are a very effective tool for interactive data exploration and visualisation.
 
+### The HTML slides were created using:
+`
+%%bash
+jupyter nbconvert \
+    --to=slides \
+    --reveal-prefix=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.2.0/ \
+    --output=py05.html \
+    './05 PyTorch Automatic differentiation.ipynb'
+`
 
-<br/>
+## Project structure
 
-## How to get started
+The project consists of the following folders and files:
 
-### GPU
-```bash
-$ git clone https://github.com/QuantScientist/Data-Science-PyCUDA-GPU/tree/master/docker
-```
+ - [`data/`](data): contains *Data sets used in the Jupyter Notebooks*,  
+ - [`notebook/`](notebook): collection of PyTorch *Jupyter Notebook*s for data exploration and results visualisation;
+ -
+ 
+## Dependencies
 
-### CPU
-```
-!pip install http://download.pytorch.org/whl/cu75/torch-0.2.0.post1-cp27-cp27mu-manylinux1_x86_64.whl
-!pip install torchvision 
+- For a GPU based docker system See https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/tree/master/docker
+- Ubuntu Linux 16.04
+- Python 2.7 
+- CUDA drivers.Running a CUDA container requires a machine with at least one CUDA-capable GPU and a driver compatible with the CUDA toolkit version you are using.
 
-```
-<br/>
+## IDE
+
+This project has been realised with [*PyCharm*](https://www.jetbrains.com/pycharm/) by *JetBrains*
+
+### GPU selection
+
+Let's say your machine has `N` GPUs.
+You can choose to use any of these, by specifying the index `n = 0, ..., N-1`.
+Therefore, type `CUDA_VISIBLE_DEVICES=n` just before `python ...` in the following sections.
+
 
 # Workshop Agenda:
 
@@ -119,21 +128,5 @@ Shlomo Kashani/ [@QuantScientist](https://github.com/QuantScientist)
 
 # A very comprehensice list of PyTorch links:
 
-* [Deep Learning with PyTorch: A 60-minute Blitz](https://github.com/pytorch/tutorials/blob/master/Deep%20Learning%20with%20PyTorch.ipynb)
-* [Deep Learning For NLP in PyTorch](https://github.com/rguthrie3/DeepLearningForNLPInPytorch)
-* [Practical PyTorch](https://github.com/spro/practical-pytorch)
-
-https://github.com/ritchieng/the-incredible-pytorch/blob/master/README.md
-
-https://github.com/Cadene/pretrained-models.pytorch
-
-https://www.kaggle.com/c/carvana-image-masking-challenge/discussion/37208
-
-http://europython2017.pogrady.com/#20
 
 
-https://blog.paperspace.com/adversarial-autoencoders-with-pytorch/
-
-https://deepsense.io/deep-learning-for-satellite-imagery-via-image-segmentation/
-
-https://github.com/jcjohnson/pytorch-examples
