@@ -30,7 +30,47 @@ For a docker based system See https://github.com/QuantScientist/Data-Science-Arr
 - Python 2.7 
 - CUDA drivers.Running a CUDA container requires a machine with at least one CUDA-capable GPU and a driver compatible with the CUDA toolkit version you are using.
 
+### The HTML slides were created using (You can run this directly from Jupyter):
+`
+%%bash
+jupyter nbconvert \
+    --to=slides \
+    --reveal-prefix=https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.2.0/ \
+    --output=py05.html \
+    './05 PyTorch Automatic differentiation.ipynb'
+`
+
+## Bootcamp 5 day structure
+
+The Bootcamp consists of the following folders and files:
+ 
+- [`day 01/`](day 01): Practical machine learning with Python and sk-learn pipelines
+
+- [`day 02 PyTORCH and PyCUDA/`](day 02 PyTORCH and PyCUDA): Neural networks using the GPU, PyCUDA, PyTorch and Matlab
+
+- [`day 01/`](day 03): Applied Deep Learning in Python
+
+- [`day 01/`](day 04): Convolutional Neural Networks using Keras
+
+- [`day 01/`](day 05): Applied Deep Reinforcement Learning in Python
+
+- [`docker/`](docker): 
+
+ 
+## Dependencies
+
+- For a GPU based docker system See https://github.com/QuantScientist/Data-Science-ArrayFire-GPU/tree/master/docker
+- Ubuntu Linux 16.04
+- Python 2.7 
+- CUDA drivers.Running a CUDA container requires a machine with at least one CUDA-capable GPU and a driver compatible with the CUDA toolkit version you are using.
+
+## IDE
+
+This project has been realised with [*PyCharm*](https://www.jetbrains.com/pycharm/) by *JetBrains*
+
 # Relevant info:
 
 http://deep-ml.com/assets/5daydeep/#/3/1
 
+## Author
+Shlomo Kashani/ [@QuantScientist](https://github.com/QuantScientist) and many more. 
