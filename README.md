@@ -48,13 +48,13 @@ The Bootcamp consists of the following folders and files:
 
 - [`day 02 PyTORCH and PyCUDA/`](day 02 PyTORCH and PyCUDA): Neural networks using the GPU, PyCUDA, PyTorch and Matlab
 
-- [`day 01/`](day 03): Applied Deep Learning in Python
+- [`day 03/`](day 03): Applied Deep Learning in Python
 
-- [`day 01/`](day 04): Convolutional Neural Networks using Keras
+- [`day 04/`](day 04): Convolutional Neural Networks using Keras
 
-- [`day 01/`](day 05): Applied Deep Reinforcement Learning in Python
+- [`day 05/`](day 05): Applied Deep Reinforcement Learning in Python
 
-- [`docker/`](docker): 
+- [`docker/`](docker): a GPU based docker system for the bootcamp
 
  
 ## Dependencies
