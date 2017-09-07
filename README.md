@@ -14,6 +14,7 @@ The Bootcamp amalgamates “Theory” and “Practice” – identifying that a 
 
 Click to view the full CURRICULUM : http://deep-ml.com/assets/5daydeep/#/3/1
 
+![cuda](curr.png)
 
 #### Meetup:
 https://www.meetup.com/TensorFlow-Tel-Aviv/events/241762893/
