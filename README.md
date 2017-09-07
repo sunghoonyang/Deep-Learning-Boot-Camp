@@ -1,5 +1,5 @@
 
-# Deep Learning Winter School: 
+# Deep Learning Winter School, November 2107. 
 ## Tel Aviv Deep Learning Bootcamp : http://deep-ml.com. 
 
 ![cuda](bootcamp.jpg)
