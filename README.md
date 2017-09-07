@@ -16,17 +16,23 @@ The Bootcamp amalgamates “Theory” and “Practice” – identifying that a 
 
 The Bootcamp consists of the following folders and files:
  
-- [day 01/](day 01): Practical machine learning with Python and sk-learn pipelines
+- [day 01]('day 01'): 
+Practical machine learning with Python and sk-learn pipelines
 
-- [day 02 PyTORCH and PyCUDA/](day 02 PyTORCH and PyCUDA): Neural networks using the GPU, PyCUDA, PyTorch and Matlab
+- [day 02 PyTORCH and PyCUDA](day 02 PyTORCH and PyCUDA): 
+Neural networks using the GPU, PyCUDA, PyTorch and Matlab
 
-- [day 03/](day 03): Applied Deep Learning in Python
+- [day 03](day 03): 
+Applied Deep Learning in Python
 
-- [day 04/](day 04): Convolutional Neural Networks using Keras
+- [day 04](day 04): 
+Convolutional Neural Networks using Keras
 
-- [day 05/](day 05): Applied Deep Reinforcement Learning in Python
+- [day 05](day 05): 
+Applied Deep Reinforcement Learning in Python
 
-- [docker/](docker): a GPU based docker system for the bootcamp
+- [docker](docker): 
+a GPU based docker system for the bootcamp
 
 
 Click to view the full CURRICULUM : http://deep-ml.com/assets/5daydeep/#/3/1
