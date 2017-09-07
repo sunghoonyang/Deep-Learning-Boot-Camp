@@ -16,6 +16,13 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 
 ***Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.***
 
+--------------------------------------------------------------------------------
+
+![pytorch](day.png)
+
+--------------------------------------------------------------------------------
+
+
 ## *Jupyter Notebooks*
 
 This repo contains the *PyTorch* implementations of *various Deep Learning Algorithms*.  
