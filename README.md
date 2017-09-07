@@ -12,6 +12,23 @@ Participation is via a donation to the A.L.S ASSOCIATION for promoting research 
 ### Curriculum
 The Bootcamp amalgamates “Theory” and “Practice” – identifying that a deep learning scientist desires a survey of concepts combined with a strong application of practical techniques through labs. Primarily, the foundational material and tools of the Data Science practitioner are presented via Sk-Learn. Topics continue rapidly into exploratory data analysis and classical machine learning, where the data is organized, characterized, and manipulated. From day two, the students move from engineered models into 4 days of Deep Learning. 
 
+## Bootcamp 5 day structure
+
+The Bootcamp consists of the following folders and files:
+ 
+- [day 01/](day 01): Practical machine learning with Python and sk-learn pipelines
+
+- [day 02 PyTORCH and PyCUDA/](day 02 PyTORCH and PyCUDA): Neural networks using the GPU, PyCUDA, PyTorch and Matlab
+
+- [day 03/](day 03): Applied Deep Learning in Python
+
+- [day 04/](day 04): Convolutional Neural Networks using Keras
+
+- [day 05/](day 05): Applied Deep Reinforcement Learning in Python
+
+- [docker/](docker): a GPU based docker system for the bootcamp
+
+
 Click to view the full CURRICULUM : http://deep-ml.com/assets/5daydeep/#/3/1
 
 ![cuda](curr.png)
@@ -39,22 +56,6 @@ jupyter nbconvert \
     --output=py05.html \
     './05 PyTorch Automatic differentiation.ipynb'
 `
-
-## Bootcamp 5 day structure
-
-The Bootcamp consists of the following folders and files:
- 
-- [`day 01/`](day 01): Practical machine learning with Python and sk-learn pipelines
-
-- [`day 02 PyTORCH and PyCUDA/`](day 02 PyTORCH and PyCUDA): Neural networks using the GPU, PyCUDA, PyTorch and Matlab
-
-- [`day 03/`](day 03): Applied Deep Learning in Python
-
-- [`day 04/`](day 04): Convolutional Neural Networks using Keras
-
-- [`day 05/`](day 05): Applied Deep Reinforcement Learning in Python
-
-- [`docker/`](docker): a GPU based docker system for the bootcamp
 
  
 ## Dependencies
