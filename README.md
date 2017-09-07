@@ -16,7 +16,9 @@ The Bootcamp amalgamates “Theory” and “Practice” – identifying that a 
 
 The Bootcamp consists of the following folders and files:
  
-- [day 01]('day 01'): 
+- [docker](day 01): 
+
+- [day 01](day 01): 
 Practical machine learning with Python and sk-learn pipelines
 
 - [day 02 PyTORCH and PyCUDA](day 02 PyTORCH and PyCUDA): 
