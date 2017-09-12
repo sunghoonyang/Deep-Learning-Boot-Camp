@@ -12,7 +12,7 @@ export CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0
 
 
 # Build PyTorch from source
-#git clone https://github.com/pytorch/pytorch.git
+git clone https://github.com/pytorch/pytorch.git
 cd pytorch
 git submodule update --init
 #git checkout 4eb448a051a1421de1dda9bd2ddfb34396eb7287 
