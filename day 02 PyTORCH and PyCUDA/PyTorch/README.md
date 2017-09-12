@@ -16,17 +16,25 @@ PyTorch is an optimized tensor library for Deep Learning, and is a recent newcom
 
 ***Keywords: GPU Processing, Algorithmic Differentiation, Deep Learning, Linear algebra.***
 
+
 --------------------------------------------------------------------------------
 
 ![pytorch](day.png)
 
 --------------------------------------------------------------------------------
 
-
 ## *Jupyter Notebooks*
 
 This repo contains the *PyTorch* implementations of *various Deep Learning Algorithms*.  
 *Jupyter Notebooks* are a very effective tool for interactive data exploration and visualisation.
+
+## List of Tutorials
+
+| Title        | Description           |
+| ------------- |-------------|
+| [Binary Classification with MLP]https://github.com/QuantScientist/Deep-Learning-Boot-Camp/blob/master/day%2002%20PyTORCH%20and%20PyCUDA/PyTorch/18-PyTorch-NUMER.AI-Binary-Classification-BCELoss.ipynb) | NUMER.AI Deep Learning Binary Classification using BCELoss. |
+| [[Binary Classification with CNN]https://github.com/QuantScientist/Deep-Learning-Boot-Camp/blob/master/day%2002%20PyTORCH%20and%20PyCUDA/PyTorch/55-PyTorch-using-CONV1D-on-one-dimensional-data-CNN.ipynb) | NUMER.AI Deep Learning Binary Classification using CNN. |
+
 
 ### The HTML slides were created using:
 `
