@@ -20,7 +20,6 @@ if ! dpkg-query -W cuda; then
   apt-get update
   apt-get install cuda -y
   echo "\nInstalled NVIDIA drivers."
-fi  
 else
   echo "NVIDIA driver is already installed."
 fi
