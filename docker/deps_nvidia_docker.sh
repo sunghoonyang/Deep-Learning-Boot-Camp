@@ -19,9 +19,8 @@ if ! dpkg-query -W cuda; then
   dpkg -i ./cuda-repo-ubuntu1604_8.0.61-1_amd64.deb
   apt-get update
   apt-get install cuda -y
-fi
-
   echo "\nInstalled NVIDIA drivers."
+fi  
 else
   echo "NVIDIA driver is already installed."
 fi
