@@ -258,6 +258,7 @@ RUN pip2 install http://download.pytorch.org/whl/cu80/torch-0.2.0.post2-cp27-cp2
 
 # Install Torchnet, a high-level framework for PyTorch
 RUN pip install git+https://github.com/pytorch/tnt.git@master
+RUN pip install torchvision psutil
 
 
 RUN python -m ipykernel.kernelspec
@@ -274,4 +275,4 @@ RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
 #ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/root
 
 # Expose Ports
-EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432 8000
+EXPOSE 6006 3838 8787 8888 8786 9786 8788 5432 8000 7842
