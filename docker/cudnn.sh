@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 CUDNN_TAR_FILE="cudnn-8.0-linux-x64-v6.0.tgz"
 wget http://developer.download.nvidia.com/compute/redist/cudnn/v6.0/${CUDNN_TAR_FILE}
 tar -xzvf ${CUDNN_TAR_FILE}
