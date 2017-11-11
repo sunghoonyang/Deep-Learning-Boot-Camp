@@ -31,11 +31,11 @@ CNN's.
 |:-------------    | :------------- | :------------- |
 |max. log loss     |  -             | 0.211          |
 
-### SE-ResNet50 / statoil-iceberg
 
-|                  | ResNet         | SE-ResNet      |
-|:-------------    | :------------- | :------------- |
-|max. log loss     |  -             |                |
+| Model      | Links   |
+| ------------- |:-------------:| 
+| 01. <strong>SE-ResNet20 / statoil-iceberg</strong> | [<a href="hhttps://github.com/QuantScientist/Deep-Learning-Boot-Camp/blob/master/Kaggle-PyTorch/iceberg/statoil-iceberg-classifier-challenge-cnn-ver1.py">notebook</a> / data / <a href="https://arxiv.org/pdf/1709.01507.pdf">paper</a>] |
+
 
 ## references
 
