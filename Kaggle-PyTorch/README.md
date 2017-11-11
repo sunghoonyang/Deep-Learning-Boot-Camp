@@ -22,3 +22,21 @@ The material consists of several competitions.
 ### [Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge]( https://www.kaggle.com/c/statoil-iceberg-classifier-challenge)
 
 CNN's.
+
+## result
+
+### SE-ResNet20 / statoil-iceberg
+
+|                  | ResNet20       | SE-ResNet20    |
+|:-------------    | :------------- | :------------- |
+|max. log loss     |  -             | 0.211          |
+
+### SE-ResNet50 / statoil-iceberg
+
+|                  | ResNet         | SE-ResNet      |
+|:-------------    | :------------- | :------------- |
+|max. log loss     |  -             |                |
+
+## references
+
+[paper](https://arxiv.org/pdf/1709.01507.pdf)
