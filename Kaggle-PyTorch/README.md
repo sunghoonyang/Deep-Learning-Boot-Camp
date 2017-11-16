@@ -15,28 +15,73 @@ All competitions are designed to be run from a CPU on a laptop, but can be accel
 
 Guides for downloading and installing PyTorch using Docker can be found [here](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/tree/master/docker).
 
+### Requirements
+
+- Python (3.5.2)
+- PyTorch (2.0.1)
+
 # Material
 
 The material consists of several competitions.
 
 ## [Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge]( https://www.kaggle.com/c/statoil-iceberg-classifier-challenge)
 
-### result
-
-### SE-ResNet20 / statoil-iceberg
-
-|                  | ResNet20       | SE-ResNet20    |
-|:-------------    | :------------- | :------------- |
-|max. log loss     |  -             | 0.211          |
-
-| Model      | Links   |
-| ------------- |:-------------:| 
-| 01. <strong>SE-ResNet20 / statoil-iceberg</strong> | [<a href="hhttps://github.com/QuantScientist/Deep-Learning-Boot-Camp/blob/master/Kaggle-PyTorch/iceberg/statoil-iceberg-classifier-challenge-cnn-ver1.py">notebook</a> / data / <a href="https://arxiv.org/pdf/1709.01507.pdf">paper</a>
-### references
-
-[paper 1](https://arxiv.org/pdf/1709.01507.pdf)
-[paper 2](https://github.com/hujie-frank/SENet)
 
 
+### Architectures and papers
+
+- The first CNN model: **LeNet**    
+    - [LeNet-5 - Yann LeCun][2]
+- **Residual Network**
+    -  [Deep Residual Learning for Image Recognition][5]
+    -  [Identity Mappings in Deep Residual Networks][6]
+-  **ResNeXt**  
+    -  [Aggregated Residual Transformations for Deep Neural Networks][8]
+-  **DenseNet**
+    -  [Densely Connected Convolutional Networks][9]
+-  **SENet**
+    - [Squeeze-and-Excitation Networks][10]  
 
 
+### Single model Log loss 
+
+| network               | dropout | preprocess | GPU       | params  | training time | Loss   |
+|:----------------------|:-------:|:----------:|:---------:|:-------:|:-------------:|:------:|
+| Lecun-Network         |    -    |   meanstd  | GTX1080  |          |    30 min     |        |
+| Residual-Network50    |    -    |   meanstd  | GTX1080  |          |    8 h 58 min |        |
+| DenseNet-100x12       |    -    |   meanstd  | GTX1080  |          |  30 h 40 min  |        |
+| ResNeXt-4x64d         |    -    |   meanstd  | GTX1080  |          |  22 h 50 min  |        |
+| SENet(ResNeXt-4x64d)  |    -    |   meanstd  | GTX1080  |          |  -            |   -    |
+
+
+### 100 models **ensemble** Log loss 
+
+| network               | dropout | preprocess | GPU       | params  | training time | Loss   |
+|:----------------------|:-------:|:----------:|:---------:|:-------:|:-------------:|:------:|
+| Lecun-Network         |    -    |   meanstd  | GTX1080  |          |    30 min     |        |
+| Residual-Network50    |    -    |   meanstd  | GTX1080  |          |    8 h 58 min |        |
+| DenseNet-100x12       |    -    |   meanstd  | GTX1080  |          |  30 h 40 min  |        |
+| ResNeXt-4x64d         |    -    |   meanstd  | GTX1080  |          |  22 h 50 min  |        |
+| SENet(ResNeXt-4x64d)  |    -    |   meanstd  | GTX1080  |          |  -            |   -    |
+
+
+
+## About ResNeXt & DenseNet
+
+Because I don't have enough machines to train the larger networks.    
+So I only trained the smallest network described in the paper.  
+You can see the results in [liuzhuang13/DenseNet][12] and [prlz77/ResNeXt.pytorch][13]
+
+ 
+  [2]: http://yann.lecun.com/exdb/lenet/
+  [3]: https://arxiv.org/abs/1312.4400
+  [4]: https://arxiv.org/abs/1409.1556
+  [5]: https://arxiv.org/abs/1512.03385
+  [6]: https://arxiv.org/abs/1603.05027
+  [7]: https://arxiv.org/abs/1605.07146
+  [8]: https://arxiv.org/abs/1611.05431
+  [9]: https://arxiv.org/abs/1608.06993
+  [10]: https://arxiv.org/abs/1709.01507
+  [11]: ./images/results.jpg
+  [12]: https://github.com/liuzhuang13/DenseNet
+  [13]: https://github.com/prlz77/ResNeXt.pytorch
