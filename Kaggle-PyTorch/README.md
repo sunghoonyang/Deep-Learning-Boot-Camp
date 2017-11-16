@@ -5,6 +5,8 @@
 
 Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks. Learn to compete in the [Kaggle](https://www.kaggle.com/)! competitions. 
 
+![statoil][statoil.png]
+
 All competitions are designed to be run from a CPU on a laptop, but can be accelerated with GPU resources.
 
 ## Credits
