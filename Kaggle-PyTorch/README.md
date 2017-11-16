@@ -47,22 +47,15 @@ The material consists of several competitions.
 
 | network               | dropout | preprocess | GPU       | params  | training time | Loss   |
 |:----------------------|:-------:|:----------:|:---------:|:-------:|:-------------:|:------:|
-| Lecun-Network         |    -    |   meanstd  | GTX1080  |          |    30 min     |        |
-| Residual-Network50    |    -    |   meanstd  | GTX1080  |          |    8 h 58 min |        |
-| DenseNet-100x12       |    -    |   meanstd  | GTX1080  |          |  30 h 40 min  |        |
-| ResNeXt-4x64d         |    -    |   meanstd  | GTX1080  |          |  22 h 50 min  |        |
+| Lecun-Network         |    -    |   meanstd  | GTX1080  |          |         |        |
+| Residual-Network50    |    -    |   meanstd  | GTX1080  |          |    |        |
+| DenseNet-100x12       |    -    |   meanstd  | GTX1080  |          |    |        |
+| ResNeXt-4x64d         |    -    |   meanstd  | GTX1080  |          |    |        |
 | SENet(ResNeXt-4x64d)  |    -    |   meanstd  | GTX1080  |          |  -            |   -    |
 
 
 ### 100 models **ensemble** Log loss 
-
-| network               | dropout | preprocess | GPU       | params  | training time | Loss   |
-|:----------------------|:-------:|:----------:|:---------:|:-------:|:-------------:|:------:|
-| Lecun-Network         |    -    |   meanstd  | GTX1080  |          |    30 min     |        |
-| Residual-Network50    |    -    |   meanstd  | GTX1080  |          |    8 h 58 min |        |
-| DenseNet-100x12       |    -    |   meanstd  | GTX1080  |          |  30 h 40 min  |        |
-| ResNeXt-4x64d         |    -    |   meanstd  | GTX1080  |          |  22 h 50 min  |        |
-| SENet(ResNeXt-4x64d)  |    -    |   meanstd  | GTX1080  |          |  -            |   -    |
+TBD
 
 
 
