@@ -84,3 +84,6 @@ You can see the results in [liuzhuang13/DenseNet][12] and [prlz77/ResNeXt.pytorc
   [11]: ./images/results.jpg
   [12]: https://github.com/liuzhuang13/DenseNet
   [13]: https://github.com/prlz77/ResNeXt.pytorch
+  
+  
+  Credits: Shlomo Kashani and many others. 
