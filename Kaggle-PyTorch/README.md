@@ -84,6 +84,9 @@ You can see the results in [liuzhuang13/DenseNet][12] and [prlz77/ResNeXt.pytorc
   [11]: ./images/results.jpg
   [12]: https://github.com/liuzhuang13/DenseNet
   [13]: https://github.com/prlz77/ResNeXt.pytorch
+  [14]: https://github.com/RedditSota/state-of-the-art-result-for-machine-learning-problems#computer-vision
+  [15]: https://github.com/zhunzhong07/Random-Erasing
+  [16]: https://github.com/lim0606/pytorch-geometric-gan
   
   
   Credits: Shlomo Kashani and many others. 
