@@ -1,16 +1,22 @@
 
-# PyTorch + Convolutional Neural Networks (CNN) for Kaggle
+# PyTorch Model Ensembler + Convolutional Neural Networks (CNN) for Kaggle
 
 ## [Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge]( https://www.kaggle.com/c/statoil-iceberg-classifier-challenge)
 
-Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks. Learn to compete in the [Kaggle](https://www.kaggle.com/)! competitions. 
+Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks.
+Learn to compete in the [Kaggle](https://www.kaggle.com/) competitions using *PyTorch model ensembles*.
 
 ![curve](curve.png)
 
-All competitions are designed to be run from a CPU on a laptop, but can be accelerated with GPU resources.
+- All competitions are designed to be run from a GPU.
+- Default model is SENet.
+- Default classification is Binary 
+- Default number of Image dimentions is 2.   
+- Default number of Epochs is 57 for SENet.
+- Default batch size is 32. 
+- Refer to the code to see all the arguments.   
 
 ![statoil](statoil.png)
-
 
 
 ## Credits
