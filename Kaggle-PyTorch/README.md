@@ -16,12 +16,13 @@ Learn to compete in the [Kaggle](https://www.kaggle.com/) competitions using *Py
 - Default batch size is 32. 
 - Refer to the code to see all the arguments.   
 
-![statoil](statoil.png)
-
+![curve](pytorch-ensembler.png)
 
 ## Credits
 
 [Shlomo Kashani](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/) 
+
+![statoil](statoil.png)
 
 ## Setup and Installation
 
