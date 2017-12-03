@@ -6,6 +6,9 @@
 Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks.
 Learn to compete in the [Kaggle](https://www.kaggle.com/) competitions using *PyTorch model ensembles*.
 
+Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challenge/discussion/44849
+
+
 ![curve](curve.png)
 
 - All competitions are designed to be run from a GPU.
