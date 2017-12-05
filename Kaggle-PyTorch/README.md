@@ -35,7 +35,8 @@ say you name your dataset folder 'data_directory'. Then inside 'data_directory' 
 
 ## So, the structure looks like this: 
 
-data_dir
+```
+|-  data_dir
        |- train 
              |- ships
                   |- ship_image_1
@@ -49,6 +50,7 @@ data_dir
        |- val
              |- ships
              |- ice
+```
 
 For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boot-Camp/blob/master/Kaggle-PyTorch/PyTorch-Ensembler/kdataset/seedings.py 
 
