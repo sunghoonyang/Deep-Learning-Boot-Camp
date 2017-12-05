@@ -34,20 +34,20 @@ If your dataset has 2 classes like in the Kaggle Statoil set, and you're trying 
 say you name your dataset folder 'data_directory'. Then inside 'data_directory' will be 'train' and 'test'. Further, Inside 'train' will be 2 folders - 'ships', 'icebergs'. 
 
 ## So, the structure looks like this : 
-# data_dir
-#      |- train 
-#            |- ships
-#                 |- ship_image_1
-#                 |- ship_image_2
-#                        .....
+  data_dir
+       |- train 
+             |- ships
+                  |- ship_image_1
+                  |- ship_image_2
+                         .....
 
-#            |- ice
-#                 |- ice_image_1
-#                 |- ice_image_1
-#                        .....
-#      |- val
-#            |- ships
-#            |- ice
+             |- ice
+                  |- ice_image_1
+                  |- ice_image_1
+                         .....
+       |- val
+             |- ships
+             |- ice
 
 For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boot-Camp/blob/master/Kaggle-PyTorch/PyTorch-Ensembler/kdataset/seedings.py 
 
