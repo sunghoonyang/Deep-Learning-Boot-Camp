@@ -301,7 +301,7 @@ def ensembleVer2(input_folder, output_path):
     assert averaged_scores.shape[0] == len(list(index)), "Something went wrong when concatenating/averaging!"
     averaged_scores = averaged_scores.reindex(index)
 
-    stacked_1 = pd.read_csv('submission.csv')  # for the header
+    stacked_1 = pd.read_csv('statoil-submission-template.csv')  # for the header
     print(stacked_1.shape)
     sub = pd.DataFrame()
     sub['id'] = stacked_1['id']
@@ -499,9 +499,9 @@ def selectModel(args, m):
     print("==> Creating model '{}'".format(m))
     if m.startswith('senet'):  # block, n_size=1, num_classes=1, num_rgb=2, base=32
         model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
-        args.batch_size = 32
-        args.batch_size = 32
-        args.epochs = 67
+        args.batch_size = 16
+        args.batch_size = 16
+        args.epochs = 85
         args.lr = 0.00005 * 2 * 2
 
     if m.startswith('densenet'):
@@ -543,7 +543,7 @@ def selectModel(args, m):
         model = nnmodels.simpleXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 70
+        args.epochs = 100
 
     return model
 
@@ -595,3 +595,19 @@ def find_classes(fullDir):
     df = pd.DataFrame(train, columns=['file', 'category', 'category_id', ])
 
     return classes, class_to_idx, num_to_class, df
+
+def accuracy(y_pred, y_actual, topk=(1, )):
+    """Computes the precision@k for the specified values of k"""
+    maxk = max(topk)
+    batch_size = y_actual.size(0)
+
+    _, pred = y_pred.topk(maxk, 1, True, True)
+    pred = pred.t()
+    correct = pred.eq(y_actual.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0)
+        res.append(correct_k.mul_(100.0 / batch_size))
+
+    return res
