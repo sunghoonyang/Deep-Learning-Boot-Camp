@@ -135,13 +135,15 @@ For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boo
 
 Guides for downloading and installing PyTorch using Docker can be found [here](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/tree/master/docker).
 
-### Requirements
+## Requirements
 
-* pytorch >=0.2.0
-* torchvision ==0.1.7
-* visdom >=1.0.1 (for loss and results visualization)
-* scipy
-* tqdm
+- [pytorch](https://github.com/pytorch/pytorch) >= 0.2.0
+- [torchvision](https://github.com/pytorch/vision) >= 0.1.8
+- [fcn](https://github.com/wkentaro/fcn) >= 6.1.5
+- [Pillow](https://github.com/python-pillow/Pillow)
+- [scipy](https://github.com/scipy/scipy)
+- [tqdm](https://github.com/tqdm/tqdm)
+
 
 ### Usage
 
