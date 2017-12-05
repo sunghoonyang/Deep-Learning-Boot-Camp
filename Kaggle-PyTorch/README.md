@@ -1,6 +1,6 @@
 
 
-# PyTorch Model Ensembler + Convolutional Neural Networks (CNN) for Kaggle
+# PyTorch Model Ensembler + Convolutional Neural Networks (CNN's)
 
 ![curve](logo.png)
 
