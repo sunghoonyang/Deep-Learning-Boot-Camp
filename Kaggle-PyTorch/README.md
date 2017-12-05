@@ -1,9 +1,16 @@
 
-
 # PyTorch Model Ensembler + Convolutional Neural Networks (CNN's)
 
 ![curve](logo.png)
 
+[Introduction](#Introduction) \
+[Prerequisites](#Prerequisites) \
+[Progress](#Progress) \
+[Material](#Material) \
+[Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge](#Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge) 
+
+
+# Introduction
 If you want to implement image classification by ensembling models, this is a repository that will help you out. It shows how to perform **CNN ensembling** in PyTorch with publicly available data sets. It is based on many hours of debugging and a bunch of of official pytorch tutorials/examples. I felt that it was not exactly super trivial to perform ensembling in PyTorch, and so I thought I'd release my code as a tutorial which I wrote originally for my Kaggle.
 
 I Highly encourage you to run this on a **existing data sets** (read main-binary.py to know which format to store your data in), but for a sample dataset to start with, you can download a simple 2 class dataset from here - https://download.pytorch.org/tutorial/hymenoptera_data.zip
@@ -14,9 +21,16 @@ Hope this tutorial helps you out! :)
 
 Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challenge/discussion/44849
     
-**Scripts are arranged per classification type (binary, multi class etc)** 
+![curve](curve.png)
 
-### Progress
+## Prerequisites
+
+- Computer with Linux or OSX
+- [PyTorch](http://pytorch.org) version **2 and up**
+- For training, an NVIDIA GPU is strongly recommended for speed. CPU is supported but training is very slow.
+
+
+## Progress
 
 - [x] Binary Classification on the Statoil Data Set
 - [x] SENet
@@ -25,11 +39,8 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
 - [ ] Multi-Class Classification on the TF Audio commands Data set  
 
 
-![curve](curve.png)
-
-
 # Material
-The material consists of several competitions.
+The material consists of several competitions and data sets.
 
 ## Data Sets in PyTorch 
 Enter the absolute path of the dataset folder below. Keep in mind that this code expects data to be in same format as Imagenet. I encourage you to use your own dataset. In that case you need to organize your data such that your dataset folder has EXACTLY two folders. Name these 'train' and 'val'
@@ -69,9 +80,6 @@ For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boo
 ## [Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge]( https://www.kaggle.com/c/statoil-iceberg-classifier-challenge)
 ![statoil](statoil.png)
 
-### How to
-- Download the data set
--
 
 ### Single model Log loss 
 
