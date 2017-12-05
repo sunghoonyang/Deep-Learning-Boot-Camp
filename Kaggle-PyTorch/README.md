@@ -16,6 +16,15 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
     
 **Scripts are arranged per classification type (binary, multi class etc)** 
 
+### Progress
+
+- [x] Binary Classification on the Statoil Data Set
+- [x] SENet
+- [x] Curve generation, ACC/LOSS in PNG format
+- [x] Multi-Class Classification on the Seedlings Data set  
+- [ ] Multi-Class Classification on the TF Audio commands Data set  
+
+
 ![curve](curve.png)
 
 
