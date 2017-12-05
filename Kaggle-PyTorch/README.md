@@ -2,6 +2,8 @@
 
 # PyTorch Model Ensembler + Convolutional Neural Networks (CNN) for Kaggle
 
+![curve](logo.png)
+
 Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks.
 Learn to compete in the [Kaggle](https://www.kaggle.com/) competitions using *PyTorch model ensembles*.
 
