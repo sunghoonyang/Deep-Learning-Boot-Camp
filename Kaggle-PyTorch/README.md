@@ -1,12 +1,15 @@
 
+<div align=center>
 # PyTorch Model Ensembler + Convolutional Neural Networks (CNN) for Kaggle
 
 Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks.
 Learn to compete in the [Kaggle](https://www.kaggle.com/) competitions using *PyTorch model ensembles*.
 
-Use the latest CNN architectures. Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challenge/discussion/44849
+Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challenge/discussion/44849
 
 
+<div align=left>
+    
 **Scripts are arranged per classification type (binary, multi class etc)** 
 
 ![curve](curve.png)
