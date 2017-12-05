@@ -36,19 +36,21 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
 - [x] Multi-Class Classification on the Seedlings Data set  
 - [ ] Multi-Class Classification on the TF Audio commands Data set  
 
-### Networks Used
-
-- The first CNN model: **LeNet**    
-    - [LeNet-5 - Yann LeCun][2]
-- **Residual Network**
-    -  [Deep Residual Learning for Image Recognition][5]
-    -  [Identity Mappings in Deep Residual Networks][6]
--  **ResNeXt**  
-    -  [Aggregated Residual Transformations for Deep Neural Networks][8]
--  **DenseNet**
-    -  [Densely Connected Convolutional Networks][9]
--  **SENet**
-    - [Squeeze-and-Excitation Networks][10]  
+### Networks Used (See *models* folder for details)
+- [x] SENet - [Squeeze-and-Excitation Networks]  
+- [x] Wide ResNet ([paper](https://arxiv.org/abs/1605.07146)) ([code](https://github.com/szagoruyko/wide-residual-networks))
+- [x] DenseNet ([paper](https://arxiv.org/abs/1608.06993)) ([code](https://github.com/liuzhuang13/DenseNet)) see [Andreas Veit's implementation](https://github.com/andreasveit/densenet-pytorch/blob/master/densenet.py) or [Brandon Amos's implementation](https://github.com/bamos/densenet.pytorch/blob/master/densenet.py) )
+- [ ] AlexNet ([paper](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks))
+- [ ] VGGNet ([paper](https://arxiv.org/abs/1409.1556))
+- [ ] SqueezeNet ([paper](https://arxiv.org/abs/1602.07360)) ([code](https://github.com/DeepScale/SqueezeNet))
+- [x] ResNet ([paper](https://arxiv.org/abs/1512.03385)) ([code](https://github.com/facebook/fb.resnet.torch))
+- [ ] Pre-ResNet ([paper](https://arxiv.org/abs/1603.05027)) ([code](https://github.com/facebook/fb.resnet.torch))
+- [ ] Pre-ResNet with Stochastic Depth
+- [ ] PyramidalNet ([paper](https://arxiv.org/abs/1610.02915))([code](https://github.com/jhkim89/PyramidNet))
+- [ ] PyramidalNet with Separated Stochastic Depth ([paper](https://arxiv.org/abs/1612.01230))([code](https://github.com/AkTgWrNsKnKPP/PyramidNet_with_Stochastic_Depth))
+- [ ] ResNeXt ([paper](https://arxiv.org/abs/1611.05431)) ([code](https://github.com/facebookresearch/ResNeXt))
+- [ ] MSDNet ([paper](https://arxiv.org/abs/1703.09844)) ([code](https://github.com/gaohuang/MSDNet))
+- [ ] Steerable CNN ([paper](https://arxiv.org/abs/1612.08498))
 
 #### Upcoming 
 
