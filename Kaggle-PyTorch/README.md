@@ -7,7 +7,7 @@
 [Prerequisites](#Prerequisites) \
 [Progress](#Progress) \
 [Material](#Material) \
-[Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge](#Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge) 
+[Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge](#Competition 1 -  Statoil/C-CORE Iceberg Classifier Challenge) \ 
 
 
 # Introduction
