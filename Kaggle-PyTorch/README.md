@@ -44,6 +44,8 @@ say you name your dataset folder 'data_directory'. Then inside 'data_directory' 
 
 ## So, the structure looks like this: 
 
+![curve](dataset.png)
+
 ```
 |-  data_dir
        |- train 
