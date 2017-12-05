@@ -19,16 +19,6 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
 
 ![curve](curve.png)
 
-- All competitions are designed to be run from a GPU.
-- Default model is SENet.
-- Default classification is Binary 
-- Default number of Image dimentions is 2.   
-- Default number of Epochs is 57 for SENet.
-- Default batch size is 32. 
-- Refer to the code to see all the arguments.   
-
-![curve](pytorch-ensembler.png)
-
 
 # Material
 The material consists of several competitions.
@@ -87,6 +77,15 @@ TBD
 
 # Architectures and papers
 
+- All competitions are designed to be run from a GPU.
+- Default model is SENet.
+- Default classification is Binary 
+- Default number of Image dimentions is 2.   
+- Default number of Epochs is 57 for SENet.
+- Default batch size is 32. 
+- Refer to the code to see all the arguments.   
+
+
 - The first CNN model: **LeNet**    
     - [LeNet-5 - Yann LeCun][2]
 - **Residual Network**
@@ -101,6 +100,8 @@ TBD
 
 
 ## Credits
+
+![curve](pytorch-ensembler.png)
 
 [Shlomo Kashani](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/) 
 
