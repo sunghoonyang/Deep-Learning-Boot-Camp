@@ -28,7 +28,6 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
 - [PyTorch](http://pytorch.org) version **2 and up**
 - For training, an NVIDIA GPU is strongly recommended for speed. CPU is supported but training is very slow.
 
-
 ## Progress
 
 - [x] Binary Classification on the Statoil Data Set
@@ -36,6 +35,30 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
 - [x] Curve generation, ACC/LOSS in PNG format
 - [x] Multi-Class Classification on the Seedlings Data set  
 - [ ] Multi-Class Classification on the TF Audio commands Data set  
+
+### Networks Used
+
+- The first CNN model: **LeNet**    
+    - [LeNet-5 - Yann LeCun][2]
+- **Residual Network**
+    -  [Deep Residual Learning for Image Recognition][5]
+    -  [Identity Mappings in Deep Residual Networks][6]
+-  **ResNeXt**  
+    -  [Aggregated Residual Transformations for Deep Neural Networks][8]
+-  **DenseNet**
+    -  [Densely Connected Convolutional Networks][9]
+-  **SENet**
+    - [Squeeze-and-Excitation Networks][10]  
+
+#### Upcoming 
+
+* [MaskRCNN](https://arxiv.org/abs/1703.06870) ?
+
+### DataLoaders implemented
+
+* [Statoil Satelites classification]()
+* [Seedlings Classification]()
+* [TF Audio commands classification]()
 
 
 # Material
@@ -91,8 +114,7 @@ For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boo
 | SENet(ResNeXt-4x64d)  |    -    |   meanstd  | GTX1080  |          |  -            |   -    |
 
 
-### 100 models **ensemble** Log loss 
-TBD
+### 50 models **ensemble** Log loss 
 
 
 # Architectures and papers
@@ -104,19 +126,6 @@ TBD
 - Default number of Epochs is 57 for SENet.
 - Default batch size is 32. 
 - Refer to the code to see all the arguments.   
-
-
-- The first CNN model: **LeNet**    
-    - [LeNet-5 - Yann LeCun][2]
-- **Residual Network**
-    -  [Deep Residual Learning for Image Recognition][5]
-    -  [Identity Mappings in Deep Residual Networks][6]
--  **ResNeXt**  
-    -  [Aggregated Residual Transformations for Deep Neural Networks][8]
--  **DenseNet**
-    -  [Densely Connected Convolutional Networks][9]
--  **SENet**
-    - [Squeeze-and-Excitation Networks][10]  
 
 
 ## Credits
@@ -132,8 +141,34 @@ Guides for downloading and installing PyTorch using Docker can be found [here](h
 
 ### Requirements
 
-- Python (3.5.2)
-- PyTorch (2.0.1)
+* pytorch >=0.2.0
+* torchvision ==0.1.7
+* visdom >=1.0.1 (for loss and results visualization)
+* scipy
+* tqdm
+
+### Usage
+
+Launch [visdom](https://github.com/facebookresearch/visdom#launch) by running (in a separate terminal window)
+
+```
+python -m visdom.server
+```
+
+**To train the model :**
+
+```
+```
+
+**To validate the model :**
+
+```
+```
+
+**To test the model w.r.t. a dataset on custom images(s):**
+
+```
+```
 
 
 ## About ResNeXt & DenseNet
@@ -144,5 +179,5 @@ https://github.com/RedditSota/state-of-the-art-result-for-machine-learning-probl
 https://github.com/zhunzhong07/Random-Erasing
 https://github.com/lim0606/pytorch-geometric-gan
   
-  
+## Contributors   
 Credits: Shlomo Kashani and many others. 
