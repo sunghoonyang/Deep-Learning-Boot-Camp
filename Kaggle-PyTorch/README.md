@@ -33,8 +33,9 @@ The structure within 'train' and 'val' folders will be the same. They both conta
 If your dataset has 2 classes like in the Kaggle Statoil set, and you're trying to classify between pictures of 1) ships 2) Icebergs, 
 say you name your dataset folder 'data_directory'. Then inside 'data_directory' will be 'train' and 'test'. Further, Inside 'train' will be 2 folders - 'ships', 'icebergs'. 
 
-## So, the structure looks like this : 
-  data_dir
+## So, the structure looks like this: 
+
+data_dir
        |- train 
              |- ships
                   |- ship_image_1
