@@ -5,7 +5,7 @@
 Learn PyTorch + Kaggle from scratch by examples and visualizations with interactive jupyter notebooks.
 Learn to compete in the [Kaggle](https://www.kaggle.com/) competitions using *PyTorch model ensembles*.
 
-If you want to implement image classification by ensembling mdoels, this is a tutorial will help you out. It shows how to perform CNN ensembling in PyTorch with publicly available data sets. It is based on many hours of debugging and a bunch of of official pytorch tutorials/examples. I felt that it was not exactly super trivial to perform ensembling in PyTorch, and so I thought I'd release my code as a tutorial which I wrote originally for my Kaggle.
+If you want to implement image classification by ensembling models, this is a tutorial will help you out. It shows how to perform CNN ensembling in PyTorch with publicly available data sets. It is based on many hours of debugging and a bunch of of official pytorch tutorials/examples. I felt that it was not exactly super trivial to perform ensembling in PyTorch, and so I thought I'd release my code as a tutorial which I wrote originally for my Kaggle.
 
 Highly encourage you to run this on a **existing data sets** (read main-binary.py to know which format to store your data in), but for a sample dataset to start with, you can download a simple 2 class dataset from here - https://download.pytorch.org/tutorial/hymenoptera_data.zip
 
