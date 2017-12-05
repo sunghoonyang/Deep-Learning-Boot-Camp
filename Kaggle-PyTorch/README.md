@@ -128,11 +128,7 @@ For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boo
 - Refer to the code to see all the arguments.   
 
 
-## Credits
-
 ![curve](pytorch-ensembler.png)
-
-[Shlomo Kashani](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/) 
 
 
 ## Setup and Installation
@@ -181,3 +177,5 @@ https://github.com/lim0606/pytorch-geometric-gan
   
 ## Contributors   
 Credits: Shlomo Kashani and many others. 
+
+[Shlomo Kashani](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/) 
