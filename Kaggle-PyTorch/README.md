@@ -10,9 +10,9 @@
 
 
 # Introduction
-Here, we investigate the effect of PyTorch model ensembles by combining the top-N single models crafted during the training phase phase. 
+Here, we investigate the effect of PyTorch model ensembles by combining the top-N single models crafted during the training phase. 
 The results demonstrate that model ensembles may significantly outperform conventional single model approaches. Moreover, 
-teh method constructs an ensemble of deep CNN models with different architectures that are complementary to each other.
+the method constructs an ensemble of deep CNN models with different architectures that are complementary to each other.
 
 **During inference, the responses of the individual ConvNets of the ensemble are averaged to form the final classification.**
 
