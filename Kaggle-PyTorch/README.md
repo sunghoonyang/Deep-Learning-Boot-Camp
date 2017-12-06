@@ -10,7 +10,16 @@
 
 
 # Introduction
-If you want to implement image classification by ensembling models, this is a repository that will help you out. It shows how to perform **CNN ensembling** in PyTorch with publicly available data sets. It is based on many hours of debugging and a bunch of of official pytorch tutorials/examples. I felt that it was not exactly super trivial to perform ensembling in PyTorch, and so I thought I'd release my code as a tutorial which I wrote originally for my Kaggle.
+Here, we investigate the effect of PyTorch model ensembles by combining the top-N single models crafted during the training phase phase. 
+The results demonstrate that model ensembles may significantly outperform conventional single model approaches. Moreover, 
+teh method constructs an ensemble of deep CNN models with different architectures that are complementary to each other.
+
+**During inference, the responses of the individual ConvNets of the ensemble are averaged to form the final classification.**
+
+If you want to investigate image classification by ensembling models, this is a repository that will help you out in doing so. 
+It shows how to perform **CNN ensembling** in PyTorch with publicly available data sets. It is based on many hours of debugging and a bunch of of official pytorch tutorials/examples. 
+
+I felt that it was not exactly super trivial to perform ensembling in PyTorch, and so I thought I'd release my code as a tutorial which I wrote originally for my Kaggle.
 
 I Highly encourage you to run this on a **existing data sets** (read main-binary.py to know which format to store your data in), but for a sample dataset to start with, you can download a simple 2 class dataset from here - https://download.pytorch.org/tutorial/hymenoptera_data.zip
 
