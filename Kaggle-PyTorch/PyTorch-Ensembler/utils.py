@@ -512,26 +512,26 @@ def selectModel(args, m):
         args.lr = 0.05
     if m.startswith('minidensenet'):
         model = nnmodels.minidensnetXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 256
-        args.batch_size = 256
+        args.batch_size = 32
+        args.batch_size = 32
         args.epochs = 76
         args.lr = 0.0005 * 2
     if m.startswith('vggnet'):
         model = nnmodels.vggnetXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 256
-        args.batch_size = 256
-        args.epochs = 73
+        args.batch_size = 64
+        args.batch_size = 64
+        args.epochs = 77
         args.lr = 0.0005
     if m.startswith('resnext'):
         model = nnmodels.resnetxtXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 56
+        args.epochs = 66
     if m.startswith('lenet'):
         model = nnmodels.lenetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 56
+        args.epochs = 88
 
     if m.startswith('wrn'):
         model = nnmodels.wrnXX_generic(args.num_classes, args.imgDim)
@@ -543,7 +543,7 @@ def selectModel(args, m):
         model = nnmodels.simpleXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 128
         args.batch_size = 128
-        args.epochs = 100
+        args.epochs = 120
 
     if m.startswith('unet'):
         model = nnmodels.unetXX_generic(args.num_classes, args.imgDim)

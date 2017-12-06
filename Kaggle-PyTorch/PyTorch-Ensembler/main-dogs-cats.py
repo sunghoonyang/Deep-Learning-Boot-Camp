@@ -290,7 +290,7 @@ if __name__ == '__main__':
             recorder = RecorderMeter(args.epochs)  # epoc is updated
             model_name = (type(model).__name__)
 
-            exp_name = datetime.datetime.now().strftime(model_name + '_' + + args.dataset + '_%Y-%m-%d_%H-%M-%S')
+            exp_name = datetime.datetime.now().strftime(model_name + '_' + args.dataset + '_%Y-%m-%d_%H-%M-%S')
             if use_tensorboard == True:
                 exp = cc.create_experiment(exp_name)
             # if model_name =='NoneType':
