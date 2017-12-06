@@ -280,19 +280,20 @@ if __name__ == '__main__':
 
     if use_tensorboard == True:
         cc = CrayonClient(hostname='http://192.168.0.3')
-        cc.remove_all_experiments()
-        exp_name = datetime.datetime.now().strftime('vgg16_%m-%d_%H-%M')
-        exp = cc.create_experiment(exp_name)
+        # cc.remove_all_experiments()
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     models = ['simple']
     for i in range (1,10):
         for m in models:
-            runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)
             model = selectModel(args, m)
             recorder = RecorderMeter(args.epochs)  # epoc is updated
             model_name = (type(model).__name__)
+
+            runId = datetime.datetime.now().strftime(args.dataset + '/' + model_name + '%Y-%m-%d_%H-%M-%S')
+            if use_tensorboard == True:
+                exp = cc.create_experiment(runId)
             # if model_name =='NoneType':
             #     EXIT
             mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'

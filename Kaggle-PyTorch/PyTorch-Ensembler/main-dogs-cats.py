@@ -198,19 +198,37 @@ columns = ['id', 'label']
 
 from ktransforms import *
 
+# train_trans = transforms.Compose([
+#     transforms.RandomSizedCrop(args.img_scale),
+#     transforms.RandomHorizontalFlip(),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225],),
+#     RandomErasing(),
+# ])
+
+## Augmentation + Normalization for full training
 train_trans = transforms.Compose([
     transforms.RandomSizedCrop(args.img_scale),
-    transforms.RandomHorizontalFlip(),
+    PowerPIL(),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    normalize_img,
 ])
 
+## Normalization only for validation and test
 valid_trans = transforms.Compose([
     transforms.Scale(256),
     transforms.CenterCrop(args.img_scale),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    normalize_img
 ])
+# valid_trans = transforms.Compose([
+#     transforms.Scale(256),
+#     transforms.CenterCrop(args.img_scale),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+#     #RandomErasing(),
+# ])
+# valid_trans=ds_transform_raw
 
 test_trans = valid_trans
 
@@ -259,19 +277,19 @@ if __name__ == '__main__':
 
     if use_tensorboard == True:
         cc = CrayonClient(hostname='http://192.168.0.3')
-        cc.remove_all_experiments()
-        exp_name = datetime.datetime.now().strftime('vgg16_%m-%d_%H-%M')
-        exp = cc.create_experiment(exp_name)
+        # cc.remove_all_experiments()
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Çlasses {}'.format(classes))
     models = ['simple']
     for i in range (1,10):
         for m in models:
-            runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)
             model = selectModel(args, m)
             model_name = (type(model).__name__)
+            runId = datetime.datetime.now().strftime(args.dataset + '/' + model_name + '%Y-%m-%d_%H-%M-%S')
+            if use_tensorboard == True:
+                exp = cc.create_experiment(runId)
             recorder = RecorderMeter(args.epochs)  # epoc is updated
             # if model_name =='NoneType':
             #     EXIT
