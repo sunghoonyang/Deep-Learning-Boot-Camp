@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from kdataset import *
 from utils import *
-
+from pycrayon import *
 # Random seed
 
 model_names = sorted(name for name in nnmodels.__dict__
@@ -56,6 +56,12 @@ parser.add_argument('--ngpu', type=int, default=1, help='0 = CPU.')
 parser.add_argument('--workers', type=int, default=0, help='number of data loading workers (default: 0)')
 # random seed
 parser.add_argument('--manualSeed', type=int, default=999, help='manual seed')
+
+# Random Erasing
+from ktransforms import *
+parser.add_argument('--p', default=0.32, type=float, help='Random Erasing probability')
+parser.add_argument('--sh', default=0.4, type=float, help='max erasing area')
+parser.add_argument('--r1', default=0.3, type=float, help='aspect of erasing area')
 
 args = parser.parse_args()
 
@@ -112,11 +118,11 @@ def train(train_loader, model, criterion, optimizer, args):
         # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
-
-
-
         if i % args.print_freq == 0:
             print('TRAIN: LOSS-->{loss.val:.4f} ({loss.avg:.4f})\t' 'ACC-->{acc.val:.3f}% ({acc.avg:.3f}%)'.format(loss=losses, acc=acc))
+            if use_tensorboard:
+                exp.add_scalar_value('tr_epoch_loss', losses.avg, step=epoch)
+                exp.add_scalar_value('tr_epoch_acc', acc.avg, step=epoch)
 
     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
 
@@ -152,8 +158,14 @@ def validate(val_loader, model, criterion, args):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % args.print_freq == 0:
-            print('VAL:   LOSS--> {loss.val:.4f} ({loss.avg:.4f})\t''ACC-->{acc.val:.3f} ({acc.avg:.3f})'.format(loss=losses, acc=acc))
+        if i % 400 == 0:
+            print('VAL:   LOSS--> {loss.val:.4f} ({loss.avg:.4f})\t''ACC-->{acc.val:.3f} ({acc.avg:.3f})'.format(
+                loss=losses, acc=acc))
+
+        if i % 50 == 0:
+            if use_tensorboard:
+                exp.add_scalar_value('val_epoch_loss', losses.avg, step=epoch)
+                exp.add_scalar_value('val_epoch_acc', acc.avg, step=epoch)
 
     print(' * Accuracy {acc.avg:.3f}'.format(acc=acc))
     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
@@ -186,19 +198,37 @@ def loadDB(args):
     return t_loader, v_loader, train_set, valid_set, classes, class_to_idx, num_to_class, df
 
 
+# train_trans = transforms.Compose([
+#     transforms.RandomSizedCrop(args.img_scale),
+#     transforms.RandomHorizontalFlip(),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225],),
+#     RandomErasing(),
+# ])
+
+## Augmentation + Normalization for full training
 train_trans = transforms.Compose([
     transforms.RandomSizedCrop(args.img_scale),
-    transforms.RandomHorizontalFlip(),
+    PowerPIL(),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    normalize_img,
 ])
 
+## Normalization only for validation and test
 valid_trans = transforms.Compose([
     transforms.Scale(256),
     transforms.CenterCrop(args.img_scale),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    normalize_img
 ])
+# valid_trans = transforms.Compose([
+#     transforms.Scale(256),
+#     transforms.CenterCrop(args.img_scale),
+#     transforms.ToTensor(),
+#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+#     #RandomErasing(),
+# ])
+# valid_trans=ds_transform_raw
 
 test_trans = valid_trans
 
@@ -244,14 +274,24 @@ def testModel(test_dir, local_model, sample_submission):
 
 if __name__ == '__main__':
 
+    # tensorboad
+    use_tensorboard = True
+    # use_tensorboard = True and CrayonClient is not None
+
+    if use_tensorboard == True:
+        cc = CrayonClient(hostname='http://192.168.0.3')
+        cc.remove_all_experiments()
+        exp_name = datetime.datetime.now().strftime('vgg16_%m-%d_%H-%M')
+        exp = cc.create_experiment(exp_name)
+
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
-    models = ['vggnet']
+    models = ['simple']
     for i in range (1,10):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            recorder = RecorderMeter(args.epochs)  # epoc is updated
             fixSeed(args)
             model = selectModel(args, m)
+            recorder = RecorderMeter(args.epochs)  # epoc is updated
             model_name = (type(model).__name__)
             # if model_name =='NoneType':
             #     EXIT

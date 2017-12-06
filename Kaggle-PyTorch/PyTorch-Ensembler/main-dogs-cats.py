@@ -118,6 +118,9 @@ def train(train_loader, model, criterion, optimizer, args):
 
         if i % args.print_freq == 0:
             print('TRAIN: LOSS-->{loss.val:.4f} ({loss.avg:.4f})\t' 'ACC-->{acc.val:.3f}% ({acc.avg:.3f}%)'.format(loss=losses, acc=acc))
+            if use_tensorboard:
+                exp.add_scalar_value('tr_epoch_loss', losses.avg, step=epoch)
+                exp.add_scalar_value('tr_epoch_acc', acc.avg, step=epoch)
 
     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
 
@@ -156,6 +159,11 @@ def validate(val_loader, model, criterion, args):
         if i % 400== 0:
             print('VAL:   LOSS--> {loss.val:.4f} ({loss.avg:.4f})\t''ACC-->{acc.val:.3f} ({acc.avg:.3f})'.format(loss=losses, acc=acc))
 
+        if i % 100 == 0:
+            if use_tensorboard:
+                exp.add_scalar_value('val_epoch_loss', losses.avg, step=epoch)
+                exp.add_scalar_value('val_epoch_acc', acc.avg, step=epoch)
+
     print(' * Accuracy {acc.avg:.3f}'.format(acc=acc))
     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
 
@@ -186,6 +194,9 @@ def loadDB(args):
 
     return t_loader, v_loader, train_set, valid_set, classes, class_to_idx, num_to_class, df
 
+columns = ['id', 'label']
+
+from ktransforms import *
 
 train_trans = transforms.Compose([
     transforms.RandomSizedCrop(args.img_scale),
@@ -222,38 +233,35 @@ def testModel(test_dir, local_model, sample_submission):
         local_model.cuda()
     local_model.eval()
 
-    columns = ['id', 'label']
+
     df_pred = pd.DataFrame(data=np.zeros((0, len(columns))), columns=columns)
     #     df_pred.species.astype(int)
     for index, row in (sample_submission.iterrows()):
         #         for file in os.listdir(test_dir):
-        currImage = os.path.join(test_dir, str(row['id']))
+        currImage = os.path.join(test_dir, str(int(row['id'])) + '.jpg')
         if os.path.isfile(currImage):
             X_tensor_test = testImageLoader(currImage)
-            #             print (type(X_tensor_test))
             if args.use_cuda:
                 X_tensor_test = Variable(X_tensor_test.cuda())
             else:
                 X_tensor_test = Variable(X_tensor_test)
-
-                # get the index of the max log-probability
             predicted_val = (local_model(X_tensor_test)).data.max(1)[1]  # get the index of the max log-probability
-            #             predicted_val = predicted_val.data.max(1, keepdim=True)[1]
             p_test = (predicted_val.cpu().numpy().item())
-            df_pred = df_pred.append({'id': row['id'], 'label': num_to_class[int(p_test)]}, ignore_index=True)
+            df_pred = df_pred.append({'id': int(row['id']), 'label': num_to_class[int(p_test)]}, ignore_index=True)
 
     return df_pred
 
 if __name__ == '__main__':
 
     # tensorboad
+    use_tensorboard = True
     # use_tensorboard = True and CrayonClient is not None
-    # if use_tensorboard:
-    #     cc = CrayonClient(hostname='127.0.0.1')
-    #     cc.remove_all_experiments()
-    # exp_name = datetime.now().strftime('vgg16_%m-%d_%H-%M')
-    # exp = cc.create_experiment(exp_name)
 
+    if use_tensorboard == True:
+        cc = CrayonClient(hostname='http://192.168.0.3')
+        cc.remove_all_experiments()
+        exp_name = datetime.datetime.now().strftime('vgg16_%m-%d_%H-%M')
+        exp = cc.create_experiment(exp_name)
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Çlasses {}'.format(classes))
@@ -261,11 +269,10 @@ if __name__ == '__main__':
     for i in range (1,10):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-
-            recorder = RecorderMeter(args.epochs)  # epoc is updated
             fixSeed(args)
             model = selectModel(args, m)
             model_name = (type(model).__name__)
+            recorder = RecorderMeter(args.epochs)  # epoc is updated
             # if model_name =='NoneType':
             #     EXIT
             mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'
@@ -310,10 +317,10 @@ if __name__ == '__main__':
                 recorder.plot_curve(os.path.join(mPath, model_name + '_' + runId + '.png'), args, model)
 
 
-                if (float(accuracy_val) > float(85.0)):
+                if (float(accuracy_val) > float(0.0)):
                     print ("*** EARLY STOPPING ***")
                     s_submission = pd.read_csv('catdog-sample_submission.csv')
-                    s_submission.columns = ['id', 'label']
+                    s_submission.columns = columns
                     df_pred = testModel(args.data_path_test, model, s_submission)
 
                     pre = args.save_path_model + '/' + '/pth/'
@@ -323,5 +330,4 @@ if __name__ == '__main__':
                     torch.save(model.state_dict(), fName + '_cnn.pth')
                     csv_path = str(fName + '_submission.csv')
                     df_pred.to_csv(csv_path, columns=('id', 'label'), index=None)
-                    # df_pred.to_csv(csv_path, columns=('id', 'is_iceberg'), index=None)
                     print(csv_path)
