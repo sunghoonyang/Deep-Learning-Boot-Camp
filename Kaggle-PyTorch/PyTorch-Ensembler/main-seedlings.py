@@ -300,7 +300,8 @@ if __name__ == '__main__':
             args.save_path_model = mPath
             if not os.path.isdir(args.save_path_model):
                 mkdir_p(args.save_path_model)
-            log = open(os.path.join(args.save_path_model, 'log_seed_{}_{}.txt'.format(args.manualSeed, runId)), 'w')
+            log = open(os.path.join(args.save_path_model, 'log_seed_{}_{}.txt'.format(args.manualSeed,
+                                                                                      datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))), 'w')
             print_log('Save path : {}'.format(args.save_path_model), log)
             print_log(state, log)
             print_log("Random Seed: {}".format(args.manualSeed), log)
