@@ -284,13 +284,15 @@ if __name__ == '__main__':
     models = ['simple']
     for i in range (1,10):
         for m in models:
+            runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)
             model = selectModel(args, m)
-            model_name = (type(model).__name__)
-            runId = datetime.datetime.now().strftime(args.dataset + '/' + model_name + '%Y-%m-%d_%H-%M-%S')
-            if use_tensorboard == True:
-                exp = cc.create_experiment(runId)
             recorder = RecorderMeter(args.epochs)  # epoc is updated
+            model_name = (type(model).__name__)
+
+            exp_name = datetime.datetime.now().strftime(model_name + '_%Y-%m-%d_%H-%M-%S')
+            if use_tensorboard == True:
+                exp = cc.create_experiment(exp_name)
             # if model_name =='NoneType':
             #     EXIT
             mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'

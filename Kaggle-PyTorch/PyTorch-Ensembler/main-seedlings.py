@@ -280,28 +280,30 @@ if __name__ == '__main__':
 
     if use_tensorboard == True:
         cc = CrayonClient(hostname='http://192.168.0.3')
-        # cc.remove_all_experiments()
+        cc.remove_all_experiments()
+
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     models = ['simple']
     for i in range (1,10):
         for m in models:
+            runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)
             model = selectModel(args, m)
             recorder = RecorderMeter(args.epochs)  # epoc is updated
             model_name = (type(model).__name__)
 
-            runId = datetime.datetime.now().strftime(args.dataset + '/' + model_name + '%Y-%m-%d_%H-%M-%S')
+            exp_name = datetime.datetime.now().strftime(model_name + '_%Y-%m-%d_%H-%M-%S')
             if use_tensorboard == True:
-                exp = cc.create_experiment(runId)
+                exp = cc.create_experiment(exp_name)
+
             # if model_name =='NoneType':
             #     EXIT
             mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'
             args.save_path_model = mPath
             if not os.path.isdir(args.save_path_model):
                 mkdir_p(args.save_path_model)
-            log = open(os.path.join(args.save_path_model, 'log_seed_{}_{}.txt'.format(args.manualSeed,
-                                                                                      datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))), 'w')
+            log = open(os.path.join(args.save_path_model, 'log_seed_{}_{}.txt'.format(args.manualSeed, runId)), 'w')
             print_log('Save path : {}'.format(args.save_path_model), log)
             print_log(state, log)
             print_log("Random Seed: {}".format(args.manualSeed), log)
