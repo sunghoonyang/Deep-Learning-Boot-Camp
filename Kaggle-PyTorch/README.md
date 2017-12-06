@@ -9,7 +9,12 @@ Here, we investigate the effect of PyTorch model ensembles by combining the top-
 The results demonstrate that model ensembles may significantly outperform conventional single model approaches. Moreover, 
 the method constructs an ensemble of deep CNN models with different architectures that are complementary to each other.
 
+## Ensemble learning: 
+Ensemble learning is a technique of using several models or for solving a particular classification problem. Ensemble methods seek to **promote diversity** among the models they combine and reduce the problem related to overfitting of the training data-sets.
+The outputs of the individual models of the ensemble are combined (e.g. by averaging) to form the final prediction
+
 **During inference, the responses of the individual ConvNets of the ensemble are averaged to form the final classification.**
+Both of these are **well studied techniques in the machine learning community** and relate to model averaging and **over-fitting prevention.** 
 
 If you want to investigate image classification by ensembling models, this is a repository that will help you out in doing so. 
 It shows how to perform **CNN ensembling** in PyTorch with publicly available data sets. It is based on many hours of debugging and a bunch of of official pytorch tutorials/examples. 
