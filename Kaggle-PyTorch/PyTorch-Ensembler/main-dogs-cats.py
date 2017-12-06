@@ -26,9 +26,10 @@ parser.add_argument('--lr_period', default=10, type=float, help='learning rate s
 parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='train batchsize')
 
 parser.add_argument('--num_classes', type=int, default=12, help='Number of Classes in data set.')
-parser.add_argument('--data_path', default='d:/db/data/seedings/train/', type=str, help='Path to train dataset')
-parser.add_argument('--data_path_test', default='d:/db/data/seedings/test/', type=str, help='Path to test dataset')
-parser.add_argument('--dataset', type=str, default='seeds', choices=['seeds'], help='Choose between data sets')
+parser.add_argument('--data_path', default='d:/db/data/cat-dog/train/', type=str, help='Path to train dataset')
+parser.add_argument('--data_path_test', default='d:/db/data/cat-dog/test/', type=str, help='Path to test dataset')
+parser.add_argument('--valid_path', default='d:/db/data/cat-dog/valid', help='path to the valid data folder')
+parser.add_argument('--dataset', type=str, default='catdog', choices=['cats'], help='Choose between data sets')
 
 # parser.add_argument('--arch', metavar='ARCH', default='simple', choices=model_names)
 parser.add_argument('--imgDim', default=3, type=int, help='number of Image input dimensions')
@@ -42,8 +43,6 @@ parser.add_argument('--current_time', type=str, default=datetime.datetime.now().
 parser.add_argument('--lr', '--learning-rate', type=float, default=0.0005, help='The Learning Rate.')
 parser.add_argument('--momentum', type=float, default=0.95, help='Momentum.')
 parser.add_argument('--decay', type=float, default=0.0005, help='Weight decay (L2 penalty).')
-# parser.add_argument('--schedule', type=int, nargs='+', default=[150, 225], help='Decrease learning rate at these epochs.')
-# parser.add_argument('--gammas', type=float, nargs='+', default=[0.1, 0.1],help='LR is multiplied by gamma on schedule, number of gammas should be equal to schedule')
 
 # Checkpoints
 parser.add_argument('--print_freq', default=50, type=int, metavar='N', help='print frequency (default: 200)')
@@ -73,6 +72,10 @@ if args.manualSeed is None:
     args.manualSeed = 999
 fixSeed(args)
 
+try:
+    from pycrayon import CrayonClient
+except ImportError:
+    CrayonClient = None
 
 def train(train_loader, model, criterion, optimizer, args):
     if args.use_cuda:
@@ -113,8 +116,6 @@ def train(train_loader, model, criterion, optimizer, args):
         batch_time.update(time.time() - end)
         end = time.time()
 
-
-
         if i % args.print_freq == 0:
             print('TRAIN: LOSS-->{loss.val:.4f} ({loss.avg:.4f})\t' 'ACC-->{acc.val:.3f}% ({acc.avg:.3f}%)'.format(loss=losses, acc=acc))
 
@@ -152,7 +153,7 @@ def validate(val_loader, model, criterion, args):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % args.print_freq == 0:
+        if i % 400== 0:
             print('VAL:   LOSS--> {loss.val:.4f} ({loss.avg:.4f})\t''ACC-->{acc.val:.3f} ({acc.avg:.3f})'.format(loss=losses, acc=acc))
 
     print(' * Accuracy {acc.avg:.3f}'.format(acc=acc))
@@ -215,17 +216,18 @@ def testImageLoader(image_name):
 
 
 def testModel(test_dir, local_model, sample_submission):
-    print ('Testing model: {}'.format(str(local_model)))
+    print ('Testing model')
+    # print ('Testing model: {}'.format(str(local_model)))
     if args.use_cuda:
         local_model.cuda()
     local_model.eval()
 
-    columns = ['file', 'species']
+    columns = ['id', 'label']
     df_pred = pd.DataFrame(data=np.zeros((0, len(columns))), columns=columns)
     #     df_pred.species.astype(int)
     for index, row in (sample_submission.iterrows()):
         #         for file in os.listdir(test_dir):
-        currImage = os.path.join(test_dir, row['file'])
+        currImage = os.path.join(test_dir, str(row['id']))
         if os.path.isfile(currImage):
             X_tensor_test = testImageLoader(currImage)
             #             print (type(X_tensor_test))
@@ -238,17 +240,28 @@ def testModel(test_dir, local_model, sample_submission):
             predicted_val = (local_model(X_tensor_test)).data.max(1)[1]  # get the index of the max log-probability
             #             predicted_val = predicted_val.data.max(1, keepdim=True)[1]
             p_test = (predicted_val.cpu().numpy().item())
-            df_pred = df_pred.append({'file': row['file'], 'species': num_to_class[int(p_test)]}, ignore_index=True)
+            df_pred = df_pred.append({'id': row['id'], 'label': num_to_class[int(p_test)]}, ignore_index=True)
 
     return df_pred
 
 if __name__ == '__main__':
 
+    # tensorboad
+    # use_tensorboard = True and CrayonClient is not None
+    # if use_tensorboard:
+    #     cc = CrayonClient(hostname='127.0.0.1')
+    #     cc.remove_all_experiments()
+    # exp_name = datetime.now().strftime('vgg16_%m-%d_%H-%M')
+    # exp = cc.create_experiment(exp_name)
+
+
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
-    models = ['vggnet']
+    print('Çlasses {}'.format(classes))
+    models = ['simple']
     for i in range (1,10):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+
             recorder = RecorderMeter(args.epochs)  # epoc is updated
             fixSeed(args)
             model = selectModel(args, m)
@@ -299,8 +312,8 @@ if __name__ == '__main__':
 
                 if (float(accuracy_val) > float(85.0)):
                     print ("*** EARLY STOPPING ***")
-                    s_submission = pd.read_csv(args.data_path + 'sample_submission.csv')
-                    s_submission.columns = ['file', 'species']
+                    s_submission = pd.read_csv('catdog-sample_submission.csv')
+                    s_submission.columns = ['id', 'label']
                     df_pred = testModel(args.data_path_test, model, s_submission)
 
                     pre = args.save_path_model + '/' + '/pth/'
@@ -309,6 +322,6 @@ if __name__ == '__main__':
                     fName = pre + str(accuracy_val)
                     torch.save(model.state_dict(), fName + '_cnn.pth')
                     csv_path = str(fName + '_submission.csv')
-                    df_pred.to_csv(csv_path, columns=('file', 'species'), index=None)
+                    df_pred.to_csv(csv_path, columns=('id', 'label'), index=None)
                     # df_pred.to_csv(csv_path, columns=('id', 'is_iceberg'), index=None)
                     print(csv_path)

@@ -40,6 +40,8 @@ from PIL import Image
 import datetime
 import random
 
+from utils import *
+
 # model_names = sorted(name for name in nnmodels.__dict__ if name.islower() and not name.startswith("__"))
 
 parser = argparse.ArgumentParser(description='PyTorch SENet for TF commands')
@@ -49,8 +51,6 @@ parser.add_argument('--train_path', default='d:/db/data/tf/2018/train', help='pa
 parser.add_argument('--test_path', default='d:/db/data/tf/2018/test', help='path to the test data folder')
 parser.add_argument('--valid_path', default='d:/db/data/tf/2018/valid', help='path to the valid data folder')
 parser.add_argument('--test_audio', default='d:/db/data/tf/test/audio/', help='path to the valid data folder')
-
-
 
 parser.add_argument('--save_path', type=str, default='./log/', help='Folder to save checkpoints and log.')
 parser.add_argument('--save_path_model', type=str, default='./log/', help='Folder to save checkpoints and log.')
@@ -66,7 +66,7 @@ parser.add_argument('--test', default=False, help='evaluate model on test set')
 
 parser.add_argument('--validationRatio', type=float, default=0.11, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
-parser.add_argument('--imgDim', default=3, type=int, help='number of Image input dimensions')
+parser.add_argument('--imgDim', default=1, type=int, help='number of Image input dimensions')
 parser.add_argument('--img_scale', default=224, type=int, help='Image scaling dimensions')
 parser.add_argument('--base_factor', default=20, type=int, help='SENet base factor')
 
@@ -76,7 +76,7 @@ parser.add_argument('--workers', type=int, default=0, help='number of data loadi
 # random seed
 parser.add_argument('--manualSeed', type=int, default=999, help='manual seed')
 
-
+parser.add_argument('--num_classes', type=int, default=12, help='Number of Classes in data set.')
 
 
 # feature extraction options
@@ -199,6 +199,7 @@ class TFAudioDataSet(data.Dataset):
     def __init__(self, root, transform=None, target_transform=None, window_size=.02,
                  window_stride=.01, window_type='hamming', normalize=True, max_len=101):
         classes, class_to_idx, idx_to_class = find_classes(root)
+        print ('Çlasses {}'.format(classes))
         spects = make_dataset(root, class_to_idx)
         if len(spects) == 0:
             raise (RuntimeError(
@@ -237,360 +238,8 @@ class TFAudioDataSet(data.Dataset):
     def __len__(self):
         return len(self.spects)
 
-
-'''ResNeXt in PyTorch.
-
-See the paper "Aggregated Residual Transformations for Deep Neural Networks" for more details.
-'''
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-from torch.autograd import Variable
-
-import math
-
-import torch.nn as nn
-import torch.nn.functional as F
-
-
-def conv3x3(in_planes, out_planes, stride=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=True)
-
-
-class SELayer(nn.Module):
-    def __init__(self, channel, reduction=16):
-        super(SELayer, self).__init__()
-        self.avg_pool = nn.AdaptiveAvgPool2d(1)
-        self.fc = nn.Sequential(
-            nn.Linear(channel, reduction),
-            nn.ReLU(inplace=True),
-            # nn.PReLU(),
-            nn.Linear(reduction, channel),
-            nn.Sigmoid()
-        )
-
-    def forward(self, x):
-        b, c, _, _ = x.size()
-        y = self.avg_pool(x).view(b, c)
-        y = self.fc(y).view(b, c, 1, 1)
-        return x * y
-
-
-class AudioSEBasicBlock(nn.Module):
-    expansion = 1
-
-    def __init__(self, inplanes, planes, reduction=16):
-        super(AudioSEBasicBlock, self).__init__()
-        self.conv1 = conv3x3(inplanes, planes)
-        self.bn1 = nn.BatchNorm2d(planes)
-        self.relu = nn.ReLU(inplace=True)
-        self.conv2 = conv3x3(planes, planes, 1)
-        self.bn2 = nn.BatchNorm2d(planes)
-        self.se = SELayer(planes, reduction)
-        self.downsample = nn.Sequential(nn.Conv2d(inplanes, planes, kernel_size=1,
-                                                  stride=1, bias=False),
-                                        nn.BatchNorm2d(planes))
-
-    def forward(self, x):
-        residual = self.downsample(x)
-
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-
-        out = self.conv2(out)
-        out = self.bn2(out)
-        out = self.se(out)
-
-        out += residual
-        out = self.relu(out)
-
-        return out
-
-
-class TFAudioSENet(nn.Module):
-    def __init__(self, block, n_size=1, num_classes=30, base=32):
-        super(TFAudioSENet, self).__init__()
-        self.base = base
-        self.inplane = self.base  # 45 epochs
-        # self.inplane = 16 # 57 epochs
-        self.conv1 = nn.Conv2d(1, self.inplane, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(self.inplane)
-        self.relu = nn.ReLU(inplace=True)
-        self.layer1 = self._make_layer(block, self.inplane, blocks=2 * n_size, stride=2)
-        self.layer2 = self._make_layer(block, self.inplane * 2, blocks=2 * n_size, stride=2)
-        self.layer3 = self._make_layer(block, self.inplane * 4, blocks=2 * n_size, stride=2)
-        self.avgpool = nn.AdaptiveAvgPool2d(1)
-
-        self.fc = nn.Linear(int(8 * self.base), num_classes)
-        # nn.init.kaiming_normal(self.fc.weight)
-        # self.sig = nn.Sigmoid()
-
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-                m.weight.data.normal_(0, math.sqrt(2. / n))
-            elif isinstance(m, nn.BatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
-
-    def _make_layer(self, block, planes, blocks, stride):
-
-        layers = []
-        for i in range(1, blocks):
-            layers.append(block(self.inplane, planes, stride))
-            self.inplane = planes
-
-        return nn.Sequential(*layers)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-
-        x = self.avgpool(x)
-        x = x.view(x.size(0), -1)
-        # print (x.data.size())
-        x = self.fc(x)
-        # x = F.log_softmax(x)
-        return x
-
-# class ConvCNN(nn.Module):
-#     def __init__(self, insize, outsize, kernel_size=7, padding=2, pool=2, avg=True):
-#         super(ConvCNN, self).__init__()
-#         self.avg = avg
-#         self.math = torch.nn.Sequential(
-#             torch.nn.Conv2d(insize, outsize, kernel_size=kernel_size, padding=padding),
-#             torch.nn.BatchNorm2d(outsize),
-#             torch.nn.LeakyReLU(),
-#             torch.nn.MaxPool2d(pool, pool),
-#         )
-#         self.avgpool = torch.nn.AvgPool2d(pool, pool)
-#
-#     def forward(self, x):
-#         x = self.math(x)
-#         if self.avg is True:
-#             x = self.avgpool(x)
-#         return x
-#
-#
-# class Block(nn.Module):
-#     '''Grouped convolution block.'''
-#     expansion = 2
-#
-#     def __init__(self, in_planes, cardinality=32, bottleneck_width=4, stride=1):
-#         super(Block, self).__init__()
-#         group_width = cardinality * bottleneck_width
-#         self.conv1 = nn.Conv2d(in_planes, group_width, kernel_size=1, bias=False)
-#         self.bn1 = nn.BatchNorm2d(group_width)
-#         self.conv2 = nn.Conv2d(group_width, group_width, kernel_size=3, stride=stride, padding=1, groups=cardinality,
-#                                bias=False)
-#         self.bn2 = nn.BatchNorm2d(group_width)
-#         self.conv3 = nn.Conv2d(group_width, self.expansion * group_width, kernel_size=1, bias=False)
-#         self.bn3 = nn.BatchNorm2d(self.expansion * group_width)
-#
-#         self.shortcut = nn.Sequential()
-#         if stride != 1 or in_planes != self.expansion * group_width:
-#             self.shortcut = nn.Sequential(
-#                 nn.Conv2d(in_planes, self.expansion * group_width, kernel_size=1, stride=stride, bias=False),
-#                 nn.BatchNorm2d(self.expansion * group_width)
-#             )
-#
-#     def forward(self, x):
-#         out = F.relu(self.bn1(self.conv1(x)))
-#         out = F.relu(self.bn2(self.conv2(out)))
-#         out = self.bn3(self.conv3(out))
-#         out += self.shortcut(x)
-#         out = F.relu(out)
-#         return out
-#
-#
-# class ResNeXt(nn.Module):
-#     def __init__(self, num_blocks, cardinality, bottleneck_width, num_classes=30):
-#         super(ResNeXt, self).__init__()
-#         self.cardinality = cardinality
-#         self.bottleneck_width = bottleneck_width
-#         self.in_planes = 64
-#
-#         self.conv1 = nn.Conv2d(1, 64, kernel_size=1, bias=False)
-#         self.bn1 = nn.BatchNorm2d(64)
-#         self.layer1 = self._make_layer(num_blocks[0], 1)
-#         self.layer2 = self._make_layer(num_blocks[1], 2)
-#         self.layer3 = self._make_layer(num_blocks[2], 2)
-#         # self.layer4 = self._make_layer(num_blocks[3], 2)
-#
-#         # self.linear = nn.Linear(cardinality*bottleneck_width*8, num_classes)
-#         self.linear = nn.Linear(3840, num_classes)
-#
-#         self.sig = nn.Sigmoid()
-#
-#     def _make_layer(self, num_blocks, stride):
-#         strides = [stride] + [1] * (num_blocks - 1)
-#         layers = []
-#         for stride in strides:
-#             layers.append(Block(self.in_planes, self.cardinality, self.bottleneck_width, stride))
-#             self.in_planes = Block.expansion * self.cardinality * self.bottleneck_width
-#         # Increase bottleneck_width by 2 after each stage.
-#         self.bottleneck_width *= 2
-#         return nn.Sequential(*layers)
-#
-#     def forward(self, x):
-#         out = F.relu(self.bn1(self.conv1(x)))
-#         out = self.layer1(out)
-#         out = self.layer2(out)
-#         out = self.layer3(out)
-#         # out = self.layer4(out)
-#         out = F.avg_pool2d(out, 8)
-#         out = out.view(out.size(0), -1)
-#         # print (out.data.shape)
-#         out = self.linear(out)
-#         # out = F.log_softmax(out)
-#         # out = self.sig(out)
-#         return out
-#
-#
-# def ResNeXt29_2x64d():
-#     return ResNeXt(num_blocks=[1, 1, 1], cardinality=4, bottleneck_width=8)
-#
-#
-# def ResNeXt29_4x64d():
-#     return ResNeXt(num_blocks=[3, 3, 3], cardinality=4, bottleneck_width=64)
-#
-#
-# def ResNeXt29_8x64d():
-#     return ResNeXt(num_blocks=[3, 3, 3], cardinality=8, bottleneck_width=64)
-#
-#
-# def ResNeXt29_32x4d():
-#     return ResNeXt(num_blocks=[3, 3, 3], cardinality=32, bottleneck_width=4)
-#
-
 best_prec1 = 0
 
-
-def main():
-    global args, best_prec1
-
-    if not os.path.isdir(args.save_path):
-        os.makedirs(args.save_path)
-    # fixSeed(args)
-
-    # resnet = ResNeXt29_2x64d()
-    model = TFAudioSENet(AudioSEBasicBlock, 1, 1, 32)
-    args.batch_size = 16
-    args.batch_size = 16
-    args.epochs = 85
-    args.lr = 0.00005 * 2 * 2
-    # model = models.__dict__[args.arch]()
-    model_name = (type(model).__name__)
-
-    mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'
-    args.save_path_model = mPath
-    if not os.path.isdir(args.save_path_model):
-        mkdir_p(args.save_path_model)
-
-    print("Ensemble with model {}:".format(model_name))
-    print('Save path : {}'.format(args.save_path_model))
-    print(state)
-    print("Random Seed: {}".format(args.manualSeed))
-    import sys
-    print("python version : {}".format(sys.version.replace('\n', ' ')))
-    print("torch  version : {}".format(torch.__version__))
-    print("cudnn  version : {}".format(torch.backends.cudnn.version()))
-    print("=> Final model name '{}'".format(model_name))
-    # print_log("=> Full model '{}'".format(model), log)
-    # model = torch.nn.DataParallel(model).cuda()
-    model.cuda()
-    cudnn.benchmark = True
-    print('    Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
-    print('Batch size : {}'.format(args.batch_size))
-
-    if args.use_cuda:
-        model.cuda()
-        # model = torch.nn.DataParallel(model).cuda()
-
-    cudnn.benchmark = True
-    # Data loading code
-    train_dataset = TFAudioDataSet(args.train_path, window_size=args.window_size, window_stride=args.window_stride,
-                                   window_type=args.window_type, normalize=args.normalize)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=0,
-                                               pin_memory=False, sampler=None)
-    valid_dataset = TFAudioDataSet(args.valid_path, window_size=args.window_size, window_stride=args.window_stride,
-                                   window_type=args.window_type, normalize=args.normalize)
-    val_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=None, num_workers=0,
-                                               pin_memory=False, sampler=None)
-    test_dataset = TFAudioDataSet(args.test_path, window_size=args.window_size, window_stride=args.window_stride,
-                                  window_type=args.window_type, normalize=args.normalize)
-
-    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=None,
-                                              num_workers=0,
-                                              pin_memory=False, sampler=None)
-
-    # define loss function (criterion)
-    criterion = nn.CrossEntropyLoss()
-    if args.use_cuda:
-        criterion.cuda()
-
-    optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=args.weight_decay)
-    recorder = RecorderMeter(args.epochs)  # epoc is updated
-    runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-
-    if args.test:
-        print("Testing the model and generating  output csv for submission")
-        s_submission = pd.read_csv('tf-sample-submission.csv')
-        s_submission.columns = ['fname', 'label']
-
-        checkpoint = torch.load('./log/tf/ResNeXt/checkpoint.pth.tar')
-        model.load_state_dict(checkpoint['state_dict'])
-
-        df_pred= testModel (args.test_audio, model, s_submission)
-        pre = args.save_path_model + '/' + '/pth/'
-        if not os.path.isdir(pre):
-            os.makedirs(pre)
-        fName = pre + str('.83')
-        # torch.save(model.state_dict(), fName + '_cnn.pth')
-        csv_path = str(fName + '_submission.csv')
-        df_pred.to_csv(csv_path, columns=('fname', 'label'), index=None)
-        print(csv_path)
-
-        return
-
-
-        # for epoch in range(args.start_epoch, args.epochs):
-    for epoch in tqdm(range(args.start_epoch, args.epochs)):
-        adjust_learning_rate(optimizer, epoch)
-        # train for one epoch
-        tqdm.write('\n==>>Epoch=[{:03d}/{:03d}]], LR=[{}], Batch=[{}]'.format(epoch, args.epochs,
-                                                                                    state['lr'],
-            args.batch_size) + ' [Model={}]'.format(
-            (type(model).__name__), ))
-
-        train_result, accuracy_tr=train(train_loader, model, criterion, optimizer, epoch)
-        # evaluate on validation set
-        val_result, accuracy_val = validate(val_loader, model, criterion)
-
-        recorder.update(epoch, train_result, accuracy_tr, val_result, accuracy_val)
-        mPath = args.save_path_model + '/'
-        if not os.path.isdir(mPath):
-            os.makedirs(mPath)
-        recorder.plot_curve(os.path.join(mPath, model_name + '_' + runId + '.png'), args, model)
-
-        # remember best Accuracy and save checkpoint
-        is_best = accuracy_val > best_prec1
-        best_prec1 = max(accuracy_val, best_prec1)
-        save_checkpoint({
-            'epoch': epoch + 1,
-            'state_dict': model.state_dict(),
-            'best_prec1': best_prec1,
-        }, is_best, best_prec1)
-
-    test_loss, test_acc = validate(test_loader, model, criterion)
-    print('Test: {}, {}'.format(test_loss, test_acc))
 
 def testAudioLoader(image_name):
     """load image, returns cuda tensor"""
@@ -869,6 +518,124 @@ class RecorderMeter(object):
             fig.savefig(save_path, dpi=dpi, bbox_inches='tight')
             # print('---- save figure {} into {}'.format(title, save_path))
         plt.close(fig)
+
+
+def main():
+    global args, best_prec1
+
+    if not os.path.isdir(args.save_path):
+        os.makedirs(args.save_path)
+    # fixSeed(args)
+    models = ['simple']
+
+    for m in models:
+        model = selectModel(args, m)
+        # model = models.__dict__[args.arch]()
+        model_name = (type(model).__name__)
+
+        mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'
+        args.save_path_model = mPath
+        if not os.path.isdir(args.save_path_model):
+            mkdir_p(args.save_path_model)
+
+        print("Ensemble with model {}:".format(model_name))
+        print('Save path : {}'.format(args.save_path_model))
+        print(state)
+        print("Random Seed: {}".format(args.manualSeed))
+        import sys
+        print("python version : {}".format(sys.version.replace('\n', ' ')))
+        print("torch  version : {}".format(torch.__version__))
+        print("cudnn  version : {}".format(torch.backends.cudnn.version()))
+        print("=> Final model name '{}'".format(model_name))
+        # print_log("=> Full model '{}'".format(model), log)
+        # model = torch.nn.DataParallel(model).cuda()
+        model.cuda()
+        cudnn.benchmark = True
+        print('    Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
+        print('Batch size : {}'.format(args.batch_size))
+
+        if args.use_cuda:
+            model.cuda()
+            # model = torch.nn.DataParallel(model).cuda()
+
+        cudnn.benchmark = True
+        # Data loading code
+        train_dataset = TFAudioDataSet(args.train_path, window_size=args.window_size, window_stride=args.window_stride,
+                                       window_type=args.window_type, normalize=args.normalize)
+        train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=0,
+                                                   pin_memory=False, sampler=None)
+        valid_dataset = TFAudioDataSet(args.valid_path, window_size=args.window_size, window_stride=args.window_stride,
+                                       window_type=args.window_type, normalize=args.normalize)
+        val_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=args.batch_size, shuffle=None, num_workers=0,
+                                                   pin_memory=False, sampler=None)
+        test_dataset = TFAudioDataSet(args.test_path, window_size=args.window_size, window_stride=args.window_stride,
+                                      window_type=args.window_type, normalize=args.normalize)
+
+        test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=args.batch_size, shuffle=None,
+                                                  num_workers=0,
+                                                  pin_memory=False, sampler=None)
+
+        # define loss function (criterion)
+        criterion = nn.CrossEntropyLoss()
+        if args.use_cuda:
+            criterion.cuda()
+
+        optimizer = optim.Adam(model.parameters(), args.lr, weight_decay=args.weight_decay)
+        recorder = RecorderMeter(args.epochs)  # epoc is updated
+        runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+
+        if args.test:
+            print("Testing the model and generating  output csv for submission")
+            s_submission = pd.read_csv('tf-sample-submission.csv')
+            s_submission.columns = ['fname', 'label']
+
+            checkpoint = torch.load('./log/tf/ResNeXt/checkpoint.pth.tar')
+            model.load_state_dict(checkpoint['state_dict'])
+
+            df_pred= testModel (args.test_audio, model, s_submission)
+            pre = args.save_path_model + '/' + '/pth/'
+            if not os.path.isdir(pre):
+                os.makedirs(pre)
+            fName = pre + str('.83')
+            # torch.save(model.state_dict(), fName + '_cnn.pth')
+            csv_path = str(fName + '_submission.csv')
+            df_pred.to_csv(csv_path, columns=('fname', 'label'), index=None)
+            print(csv_path)
+
+            return
+
+
+            # for epoch in range(args.start_epoch, args.epochs):
+        for epoch in tqdm(range(args.start_epoch, args.epochs)):
+            adjust_learning_rate(optimizer, epoch)
+            # train for one epoch
+            tqdm.write('\n==>>Epoch=[{:03d}/{:03d}]], LR=[{}], Batch=[{}]'.format(epoch, args.epochs,
+                                                                                        state['lr'],
+                args.batch_size) + ' [Model={}]'.format(
+                (type(model).__name__), ))
+
+            train_result, accuracy_tr=train(train_loader, model, criterion, optimizer, epoch)
+            # evaluate on validation set
+            val_result, accuracy_val = validate(val_loader, model, criterion)
+
+            recorder.update(epoch, train_result, accuracy_tr, val_result, accuracy_val)
+            mPath = args.save_path_model + '/'
+            if not os.path.isdir(mPath):
+                os.makedirs(mPath)
+            recorder.plot_curve(os.path.join(mPath, model_name + '_' + runId + '.png'), args, model)
+
+            # remember best Accuracy and save checkpoint
+            is_best = accuracy_val > best_prec1
+            best_prec1 = max(accuracy_val, best_prec1)
+            save_checkpoint({
+                'epoch': epoch + 1,
+                'state_dict': model.state_dict(),
+                'best_prec1': best_prec1,
+            }, is_best, best_prec1)
+
+        test_loss, test_acc = validate(test_loader, model, criterion)
+        print('Test: {}, {}'.format(test_loss, test_acc))
+
 
 if __name__ == '__main__':
     main()

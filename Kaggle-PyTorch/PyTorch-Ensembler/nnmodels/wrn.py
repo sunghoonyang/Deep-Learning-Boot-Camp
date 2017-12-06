@@ -102,7 +102,7 @@ class WideResNet(nn.Module):
 
 def wrnXX_generic(num_classes, imgDim):
     # depth, num_classes = 1, widen_factor = 1, dropRate = 0.0
-    model = WideResNet(depth=10, num_classes=num_classes, widen_factor=3, imgDim=imgDim, dropRate=0.7)  # 56
+    model = WideResNet(depth=10, num_classes=num_classes, widen_factor=3, imgDim=imgDim, dropRate=0.25)  # 56
     return model
 
 

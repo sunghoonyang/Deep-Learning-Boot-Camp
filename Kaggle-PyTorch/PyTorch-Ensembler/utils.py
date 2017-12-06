@@ -543,7 +543,14 @@ def selectModel(args, m):
         model = nnmodels.simpleXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 100
+        args.epochs = 80
+
+    if m.startswith('unet'):
+        model = nnmodels.unetXX_generic(args.num_classes, args.imgDim)
+        args.batch_size = 64
+        args.batch_size = 64
+        args.epochs = 50
+
 
     return model
 

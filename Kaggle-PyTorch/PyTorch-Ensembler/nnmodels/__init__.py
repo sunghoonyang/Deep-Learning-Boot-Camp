@@ -7,3 +7,4 @@ from .senet import *
 from .vgg import *
 from .wrn import *
 from .simplenet import *
+from .unet import *
