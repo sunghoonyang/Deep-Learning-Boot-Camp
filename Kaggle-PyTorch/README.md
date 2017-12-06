@@ -3,11 +3,6 @@
 
 ![curve](logo.png)
 
-[Introduction](#Introduction) \
-[Prerequisites](#Prerequisites) \
-[Progress](#Progress) \
-[Material](#Material) \
-
 
 # Introduction
 Here, we investigate the effect of PyTorch model ensembles by combining the top-N single models crafted during the training phase. 
@@ -31,11 +26,24 @@ Relevant Kaggle post: https://www.kaggle.com/c/statoil-iceberg-classifier-challe
     
 ![curve](curve.png)
 
-## Prerequisites
+# Prerequisites
 
 - Computer with Linux or OSX
 - [PyTorch](http://pytorch.org) version **2 and up**
 - For training, an NVIDIA GPU is strongly recommended for speed. CPU is supported but training is very slow.
+
+## Setup and Installation
+
+Guides for downloading and installing PyTorch using Docker can be found [here](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/tree/master/docker).
+
+## Python Requirements
+
+- [pytorch](https://github.com/pytorch/pytorch) >= 0.2.0
+- [torchvision](https://github.com/pytorch/vision) >= 0.1.8
+- [fcn](https://github.com/wkentaro/fcn) >= 6.1.5
+- [Pillow](https://github.com/python-pillow/Pillow)
+- [scipy](https://github.com/scipy/scipy)
+- [tqdm](https://github.com/tqdm/tqdm)
 
 ## Progress
 
@@ -127,33 +135,7 @@ For a full example refer to: https://github.com/QuantScientist/Deep-Learning-Boo
 
 ### 50 models **ensemble** Log loss 
 
-
-# Architectures and papers
-
-- All competitions are designed to be run from a GPU.
-- Default model is SENet.
-- Default classification is Binary 
-- Default number of Image dimentions is 2.   
-- Default number of Epochs is 57 for SENet.
-- Default batch size is 32. 
-- Refer to the code to see all the arguments.   
-
-
 ![curve](pytorch-ensembler.png)
-
-
-## Setup and Installation
-
-Guides for downloading and installing PyTorch using Docker can be found [here](https://github.com/QuantScientist/Deep-Learning-Boot-Camp/tree/master/docker).
-
-## Requirements
-
-- [pytorch](https://github.com/pytorch/pytorch) >= 0.2.0
-- [torchvision](https://github.com/pytorch/vision) >= 0.1.8
-- [fcn](https://github.com/wkentaro/fcn) >= 6.1.5
-- [Pillow](https://github.com/python-pillow/Pillow)
-- [scipy](https://github.com/scipy/scipy)
-- [tqdm](https://github.com/tqdm/tqdm)
 
 
 ### Usage
