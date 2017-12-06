@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(description='PyTorch Ensembler')
 
 print("Available models:" + str(model_names))
 
-parser.add_argument('--validationRatio', type=float, default=0.11, help='test Validation Split.')
+parser.add_argument('--validationRatio', type=float, default=0.90, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
 parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
 parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='train batchsize')

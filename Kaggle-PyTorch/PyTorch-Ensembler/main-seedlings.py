@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(description='PyTorch Ensembler')
 
 print("Available models:" + str(model_names))
 
-parser.add_argument('--validationRatio', type=float, default=0.11, help='test Validation Split.')
+parser.add_argument('--validationRatio', type=float, default=0.90, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
 parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
 parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='train batchsize')
@@ -80,95 +80,141 @@ if args.manualSeed is None:
 fixSeed(args)
 
 
-def train(train_loader, model, criterion, optimizer, args):
-    if args.use_cuda:
-        model.cuda()
-        criterion.cuda()
+# def train(train_loader, model, criterion, optimizer, args):
+#     if args.use_cuda:
+#         model.cuda()
+#         criterion.cuda()
+#
+#     batch_time = AverageMeter()
+#     data_time = AverageMeter()
+#     losses = AverageMeter()
+#     acc = AverageMeter()
+#
+#     # switch to train mode
+#     model.train()
+#
+#     end = time.time()
+#     for i, (images, target) in enumerate(train_loader):
+#         # measure data loading time
+#         data_time.update(time.time() - end)
+#
+#         if args.use_cuda:
+#             images, target = images.cuda(), target.cuda()
+#             images, target = Variable(images), Variable(target)
+#         # compute y_pred
+#         y_pred = model(images)
+#         loss = criterion(y_pred, target)
+#
+#         # measure accuracy and record loss
+#         prec1, prec1 = accuracy(y_pred.data, target.data, topk=(1, 1))
+#         losses.update(loss.data[0], images.size(0))
+#         acc.update(prec1[0], images.size(0))
+#
+#         # compute gradient and do SGD step
+#         optimizer.zero_grad()
+#         loss.backward()
+#         optimizer.step()
+#
+#         # measure elapsed time
+#         batch_time.update(time.time() - end)
+#         end = time.time()
+#         if i % args.print_freq == 0:
+#             print('TRAIN: LOSS-->{loss.val:.4f} ({loss.avg:.4f})\t' 'ACC-->{acc.val:.3f}% ({acc.avg:.3f}%)'.format(loss=losses, acc=acc))
+#             if use_tensorboard:
+#                 exp.add_scalar_value('tr_epoch_loss', losses.avg, step=epoch)
+#                 exp.add_scalar_value('tr_epoch_acc', acc.avg, step=epoch)
+#
+#     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
+#
+# def validate(val_loader, model, criterion, args):
+#     if args.use_cuda:
+#         model.cuda()
+#         criterion.cuda()
+#
+#     batch_time = AverageMeter()
+#     losses = AverageMeter()
+#     acc = AverageMeter()
+#
+#     # switch to evaluate mode
+#     model.eval()
+#
+#     end = time.time()
+#     for i, (images, labels) in enumerate(val_loader):
+#
+#         if use_cuda:
+#             images, labels = images.cuda(), labels.cuda()
+#             images, labels = Variable(images, volatile=True), Variable(labels)
+#
+#         # compute y_pred
+#         y_pred = model(images)
+#         loss = criterion(y_pred, labels)
+#
+#         # measure accuracy and record loss
+#         prec1, temp_var = accuracy(y_pred.data, labels.data, topk=(1, 1))
+#         losses.update(loss.data[0], images.size(0))
+#         acc.update(prec1[0], images.size(0))
+#
+#         # measure elapsed time
+#         batch_time.update(time.time() - end)
+#         end = time.time()
+#
+#         if i % 400 == 0:
+#             print('VAL:   LOSS--> {loss.val:.4f} ({loss.avg:.4f})\t''ACC-->{acc.val:.3f} ({acc.avg:.3f})'.format(
+#                 loss=losses, acc=acc))
+#
+#         if i % 50 == 0:
+#             if use_tensorboard:
+#                 exp.add_scalar_value('val_epoch_loss', losses.avg, step=epoch)
+#                 exp.add_scalar_value('val_epoch_acc', acc.avg, step=epoch)
+#
+#     print(' * Accuracy {acc.avg:.3f}'.format(acc=acc))
+#     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
 
-    batch_time = AverageMeter()
-    data_time = AverageMeter()
-    losses = AverageMeter()
-    acc = AverageMeter()
-
-    # switch to train mode
+def train(train_loader, model, epoch, optimizer):
     model.train()
 
-    end = time.time()
-    for i, (images, target) in enumerate(train_loader):
-        # measure data loading time
-        data_time.update(time.time() - end)
-
-        if args.use_cuda:
-            images, target = images.cuda(), target.cuda()
-            images, target = Variable(images), Variable(target)
-        # compute y_pred
-        y_pred = model(images)
-        loss = criterion(y_pred, target)
-
-        # measure accuracy and record loss
-        prec1, prec1 = accuracy(y_pred.data, target.data, topk=(1, 1))
-        losses.update(loss.data[0], images.size(0))
-        acc.update(prec1[0], images.size(0))
-
-        # compute gradient and do SGD step
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        # measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
-        if i % args.print_freq == 0:
-            print('TRAIN: LOSS-->{loss.val:.4f} ({loss.avg:.4f})\t' 'ACC-->{acc.val:.3f}% ({acc.avg:.3f}%)'.format(loss=losses, acc=acc))
-            if use_tensorboard:
-                exp.add_scalar_value('tr_epoch_loss', losses.avg, step=epoch)
-                exp.add_scalar_value('tr_epoch_acc', acc.avg, step=epoch)
-
-    return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
-
-def validate(val_loader, model, criterion, args):
-    if args.use_cuda:
-        model.cuda()
-        criterion.cuda()
-
-    batch_time = AverageMeter()
-    losses = AverageMeter()
-    acc = AverageMeter()
-
-    # switch to evaluate mode
-    model.eval()
-
-    end = time.time()
-    for i, (images, labels) in enumerate(val_loader):
-
+    for batch_idx, (data, target) in ((enumerate(train_loader))):
+        correct = 0
         if use_cuda:
-            images, labels = images.cuda(), labels.cuda()
-            images, labels = Variable(images, volatile=True), Variable(labels)
+            data, target = data.cuda(), target.cuda()
+        data, target = Variable(data), Variable(target)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, target)
+        loss.backward()
+        pred = output.data.max(1)[1]  # get the index of the max log-probability
+        correct += pred.eq(target.data).cpu().sum()
+        accuracy = 100. * correct / len(data)
+        optimizer.step()
+        if batch_idx % 200 == 0:
+            print('TRAIN: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}, Accuracy: {}/{} ({:.3f}%)'.format(
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                       100. * batch_idx / len(train_loader), loss.data[0],
+                correct, len(data),
+                accuracy))
 
-        # compute y_pred
-        y_pred = model(images)
-        loss = criterion(y_pred, labels)
 
-        # measure accuracy and record loss
-        prec1, temp_var = accuracy(y_pred.data, labels.data, topk=(1, 1))
-        losses.update(loss.data[0], images.size(0))
-        acc.update(prec1[0], images.size(0))
+def test(test_loader, model, epoch):
+    #     model.eval()
+    test_loss = 0
+    correct = 0
+    for data, target in (test_loader):
+        if use_cuda:
+            data, target = data.cuda(), target.cuda()
+        data, target = Variable(data, volatile=True), Variable(target)
+        output = model(data)
+        test_loss += criterion(output, target).data[0]
+        pred = output.data.max(1)[1]  # get the index of the max log-probability
+        correct += pred.eq(target.data).cpu().sum()
 
-        # measure elapsed time
-        batch_time.update(time.time() - end)
-        end = time.time()
+    test_loss = test_loss
+    test_loss /= len(test_loader)  # loss function already averages over batch size
+    accuracy = 100. * correct / len(test_loader.dataset)
+    print('\nVAL: Average loss: {:.6f}, Accuracy: {}/{} ({:.3f}%)\n'.format(
+        test_loss, correct, len(test_loader.dataset),
+        accuracy))
 
-        if i % 400 == 0:
-            print('VAL:   LOSS--> {loss.val:.4f} ({loss.avg:.4f})\t''ACC-->{acc.val:.3f} ({acc.avg:.3f})'.format(
-                loss=losses, acc=acc))
-
-        if i % 50 == 0:
-            if use_tensorboard:
-                exp.add_scalar_value('val_epoch_loss', losses.avg, step=epoch)
-                exp.add_scalar_value('val_epoch_acc', acc.avg, step=epoch)
-
-    print(' * Accuracy {acc.avg:.3f}'.format(acc=acc))
-    return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
+    return test_loss, accuracy
 
 
 def loadDB(args):
@@ -320,21 +366,21 @@ if __name__ == '__main__':
             print('Batch size : {}'.format(args.batch_size))
 
             criterion = torch.nn.CrossEntropyLoss()  # multi class
+            # optimizer = torch.optim.Adam(model.parameters(), args.lr)  # L2 regularization
+            optimizer = torch.optim.Adam(model.parameters(), lr=0.00005 * 2 * 2)
 
-            if args.optim is 'adam':
-                optimizer = torch.optim.Adam(model.parameters(), args.lr)  # L2 regularization
-            else:
-                optimizer = torch.optim.SGD(model.parameters(), args.lr, momentum=state['momentum'],
-                                            weight_decay=state['weight_decay'], nesterov=True)
 
             # recorder = RecorderMeter(args.epochs)  # epoc is updated
 
             for epoch in tqdm(range(args.start_epoch, args.epochs)):
-                train_result, accuracy_tr = train(trainloader, model, criterion, optimizer, args)
-                # evaluate on validation set
-                val_result, accuracy_val = validate(valloader, model, criterion,args)
+                # train_result, accuracy_tr = train(trainloader, model, criterion, optimizer, args)
+                # # evaluate on validation set
+                # val_result, accuracy_val = validate(valloader, model, criterion,args)
 
-                recorder.update(epoch, train_result, accuracy_tr, val_result, accuracy_val)
+                train(trainloader, model, epoch, optimizer)
+                test_loss, accuracy_val = test(valloader, model, epoch)
+
+                # recorder.update(epoch, train_result, accuracy_tr, val_result, accuracy_val)
                 mPath = args.save_path_model + '/'
                 if not os.path.isdir(mPath):
                     os.makedirs(mPath)

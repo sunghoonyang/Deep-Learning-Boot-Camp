@@ -4,7 +4,22 @@ import numpy as np
 import torch
 import torch.utils.data
 from torch.utils.data.dataset import Dataset
+from os.path import join
 
+import torch.utils.data as data
+from PIL import Image
+from torchvision import transforms
+import os
+# __all__ = ('SeedlingDataset')
+
+IMG_EXTENSIONS = [
+    '.jpg',
+    'png'
+]
+
+def default_loader(input_path):
+    input_image = (Image.open(input_path)).convert('RGB')
+    return input_image
 
 class IcebergCustomDataSet(Dataset):
     """total datasets."""
