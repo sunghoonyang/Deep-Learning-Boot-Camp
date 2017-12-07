@@ -293,7 +293,7 @@ def testImageLoader(image_name):
 
 
 def testModel(test_dir, local_model, sample_submission):
-    print ('Testing model: {}'.format(str(local_model)))
+    # print ('Testing model: {}'.format(str(local_model)))
     if args.use_cuda:
         local_model.cuda()
     local_model.eval()
@@ -332,7 +332,7 @@ if __name__ == '__main__':
 
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
-    models = ['senet', 'simple','lenet','vggnet']
+    models = ['senet','lenet','vggnet']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

@@ -501,7 +501,7 @@ def selectModel(args, m):
         model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
         args.batch_size = 16
         args.batch_size = 16
-        args.epochs = 85
+        args.epochs = 67
         args.lr = 0.00005 * 2 * 2
 
     if m.startswith('densenet'):
