@@ -498,8 +498,8 @@ def selectModel(args, m):
     model = None
     print("==> Creating model '{}'".format(m))
     if m.startswith('senet'):  # block, n_size=1, num_classes=1, num_rgb=2, base=32
-        # model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
-        model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
+        model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
+        # model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
         args.batch_size = 16
         args.batch_size = 16
         args.epochs = 67

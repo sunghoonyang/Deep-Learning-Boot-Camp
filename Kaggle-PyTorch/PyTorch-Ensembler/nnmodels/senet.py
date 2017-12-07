@@ -3,7 +3,7 @@ import math
 import torch.nn as nn
 from torchvision.models import ResNet
 
-__all__ = ['sesnet', 'IceSEBasicBlock', 'senetXX_generic', 'senet32_RG_1_classes']
+__all__ = ['IceResNet', 'IceSEBasicBlock', 'senetXX_generic', 'senet32_RG_1_classes']
 
 
 def conv3x3(in_planes, out_planes, stride=1):
