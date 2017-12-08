@@ -45,7 +45,7 @@ parser.add_argument('--momentum', type=float, default=0.95, help='Momentum.')
 parser.add_argument('--decay', type=float, default=0.0005, help='Weight decay (L2 penalty).')
 
 # Checkpoints
-parser.add_argument('--print_freq', default=50, type=int, metavar='N', help='print frequency (default: 200)')
+parser.add_argument('--print_freq', default=400, type=int, metavar='N', help='print frequency (default: 200)')
 parser.add_argument('--save_path', type=str, default='./log/', help='Folder to save checkpoints and log.')
 parser.add_argument('--save_path_model', type=str, default='./log/', help='Folder to save checkpoints and log.')
 parser.add_argument('--start_epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
@@ -281,7 +281,7 @@ if __name__ == '__main__':
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Çlasses {}'.format(classes))
-    models = ['simple']
+    models = ['senet']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -338,7 +338,7 @@ if __name__ == '__main__':
                 recorder.plot_curve(os.path.join(mPath, model_name + '_' + runId + '.png'), args, model)
 
 
-                if (float(accuracy_val) > float(0.0)):
+                if (float(accuracy_val) > float(75.0)):
                     print ("*** EARLY STOPPING ***")
                     s_submission = pd.read_csv('catdog-sample_submission.csv')
                     s_submission.columns = columns

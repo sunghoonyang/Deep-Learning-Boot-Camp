@@ -526,7 +526,7 @@ def main():
     if not os.path.isdir(args.save_path):
         os.makedirs(args.save_path)
     # fixSeed(args)
-    models = ['simple']
+    models = ['senet']
 
     for m in models:
         model = selectModel(args, m)
@@ -627,11 +627,27 @@ def main():
             # remember best Accuracy and save checkpoint
             is_best = accuracy_val > best_prec1
             best_prec1 = max(accuracy_val, best_prec1)
-            save_checkpoint({
-                'epoch': epoch + 1,
-                'state_dict': model.state_dict(),
-                'best_prec1': best_prec1,
-            }, is_best, best_prec1)
+
+            if float(accuracy_val) > float(70.0):
+                print("*** EARLY STOPPING ***")
+                save_checkpoint({
+                    'epoch': epoch + 1,
+                    'state_dict': model.state_dict(),
+                    'best_prec1': best_prec1,
+                }, is_best, best_prec1)
+
+                print("Testing the model and generating  output csv for submission")
+                s_submission = pd.read_csv('tf-sample-submission.csv')
+                s_submission.columns = ['fname', 'label']
+                df_pred = testModel(args.test_audio, model, s_submission)
+                pre = args.save_path_model + '/' + '/pth/'
+                if not os.path.isdir(pre):
+                    os.makedirs(pre)
+                fName = pre + str('.83')
+                # torch.save(model.state_dict(), fName + '_cnn.pth')
+                csv_path = str(fName + '_submission.csv')
+                df_pred.to_csv(csv_path, columns=('fname', 'label'), index=None)
+                print(csv_path)
 
         test_loss, test_acc = validate(test_loader, model, criterion)
         print('Test: {}, {}'.format(test_loss, test_acc))

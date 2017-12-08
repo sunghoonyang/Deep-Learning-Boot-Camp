@@ -223,6 +223,7 @@ def loadDB(args):
     print('==> Preparing dataset %s' % args.dataset)
 
     classes, class_to_idx, num_to_class, df = find_classes(args.data_path)
+    print('Çlasses {}'.format(classes))
 
     train_data = df.sample(frac=args.validationRatio)
     valid_data = df[~df['file'].isin(train_data['file'])]

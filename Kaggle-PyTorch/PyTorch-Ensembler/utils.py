@@ -552,6 +552,14 @@ def selectModel(args, m):
         args.batch_size = 64
         args.epochs = 50
 
+    if m.startswith('link'):
+        model = nnmodels.linknetXX_generic(args.num_classes, args.imgDim)
+        args.batch_size = 64
+        args.batch_size = 64
+        args.epochs = 50
+
+
+
 
     return model
 
