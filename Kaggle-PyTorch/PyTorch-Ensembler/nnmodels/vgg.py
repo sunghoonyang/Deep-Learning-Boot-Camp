@@ -46,5 +46,5 @@ class VGG(nn.Module):
 # print(net(Variable(x)).size())
 
 def vggnetXX_generic(num_classes, num_rgb):
-    model = VGG('VGG16', num_classes, num_rgb)  # 56
+    model = VGG('VGG19', num_classes, num_rgb)  # 56
     return model

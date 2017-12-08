@@ -28,7 +28,7 @@ from torchvision.transforms import *
 import nnmodels as nnmodels
 
 from os import listdir
-
+import sys
 
 # __all__ = ['Logger', 'LoggerMonitor', 'savefig']
 # __all__ = ['get_mean_and_std', 'init_params', 'mkdir_p', 'AverageMeter', 'accuracy']
@@ -377,13 +377,15 @@ class RecorderMeter(object):
         else:
             return self.epoch_accuracy[:self.current_epoch, 1].max()
 
+
     def plot_curve(self, save_path, args, model):
-        title = 'PyTorch Model:' + str((type(model).__name__)).upper() + ', DataSet:' + str(args.dataset).upper() + ',' \
-                + 'Params: %.2fM' % (
-            sum(p.numel() for p in model.parameters()) / 1000000.0) + ', Seed: %.2f' % args.manualSeed
+        title = 'PyTorch-Ensembler:' + str((type(model).__name__)).upper() + ',LR:' + str(args.lr) +  ',DataSet:' + str(args.dataset).upper() + ',' + '\n'\
+                + ',Params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0) + ',Seed: %.2f' % args.manualSeed + \
+                ",Torch: {}".format(torch.__version__) + ", Batch:{}".format(args.batch_size)
+
         dpi = 80
         width, height = 1200, 800
-        legend_fontsize = 10
+        legend_fontsize = 6
         scale_distance = 48.8
         figsize = width / float(dpi), height / float(dpi)
 
@@ -449,10 +451,19 @@ def sgdr(period, batch_idx):
     return 0.5 * (1.0 + math.cos(radians))
 
 
-def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    lr = lr * (0.01 ** (epoch // 10))
-    for param_group in optimizer.state_dict()['param_groups']:
+# def adjust_learning_rate(optimizer, epoch):
+#     global lr
+#     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
+#     lr = lr * (0.01 ** (epoch // 10))
+#     for param_group in optimizer.state_dict()['param_groups']:
+#         param_group['lr'] = lr
+
+def adjust_learning_rate(optimizer, epoch, args):
+    """Sets the learning rate to the initial LR decayed by 10 after 20 and 40  and 60 epochs"""
+    # global lr
+    lr = args.lr * (0.1 ** (epoch // 25)) * (0.1 ** (epoch //  45)) * (0.1 ** (epoch //  55))
+
+    for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
 
@@ -500,10 +511,10 @@ def selectModel(args, m):
     if m.startswith('senet'):  # block, n_size=1, num_classes=1, num_rgb=2, base=32
         model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
         # model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
-        args.batch_size = 16
-        args.batch_size = 16
-        args.epochs = 67
-        args.lr = 0.00005 * 2 * 2
+        args.batch_size = 64
+        args.batch_size = 64
+        args.epochs = 77
+        args.lr =  0.0005 # do not change !!! optimal for the Statoil data set
 
     if m.startswith('densenet'):
         model = nnmodels.densnetXX_generic(args.num_classes, args.imgDim)
@@ -521,12 +532,12 @@ def selectModel(args, m):
         model = nnmodels.vggnetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 77
+        args.epochs = 88
         args.lr = 0.0005
     if m.startswith('resnext'):
         model = nnmodels.resnetxtXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 64
-        args.batch_size = 64
+        args.batch_size = 16
+        args.batch_size = 16
         args.epochs = 66
     if m.startswith('lenet'):
         model = nnmodels.lenetXX_generic(args.num_classes, args.imgDim)
@@ -558,13 +569,11 @@ def selectModel(args, m):
         args.batch_size = 64
         args.epochs = 50
 
-
-
-
     return model
 
 
 def BinaryInference(local_model, args):
+    local_model.eval()
     df_test_set = pd.read_json(args.data_path + '/test.json')
     df_test_set['band_1'] = df_test_set['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
     df_test_set['band_2'] = df_test_set['band_2'].apply(lambda x: np.array(x).reshape(75, 75))

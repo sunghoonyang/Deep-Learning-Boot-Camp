@@ -333,7 +333,7 @@ if __name__ == '__main__':
 
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
-    models = ['senet','lenet','vggnet']
+    models = ['wrn']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

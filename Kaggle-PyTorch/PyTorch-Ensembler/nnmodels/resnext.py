@@ -4,8 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import init
 
-__all__ = ['resnext', 'resnetxtXX_generic']
-
 
 class ResNeXtBottleneck(nn.Module):
     expansion = 4
@@ -49,14 +47,14 @@ class ResNeXtBottleneck(nn.Module):
         return F.relu(residual + bottleneck, inplace=True)
 
 
-class GenericResNeXt(nn.Module):
+class CifarResNeXt(nn.Module):
     """
     ResNext optimized for the Cifar dataset, as specified in
     https://arxiv.org/pdf/1611.05431.pdf
     """
 
-    def __init__(self, block, depth, cardinality, base_width, num_classes, n_dim):
-        super(GenericResNeXt, self).__init__()
+    def __init__(self, block, depth, cardinality, base_width, num_classes):
+        super(CifarResNeXt, self).__init__()
 
         # Model type specifies number of layers for CIFAR-10 and CIFAR-100 model
         assert (depth - 2) % 9 == 0, 'depth should be one of 29, 38, 47, 56, 101'
@@ -66,7 +64,7 @@ class GenericResNeXt(nn.Module):
         self.base_width = base_width
         self.num_classes = num_classes
 
-        self.conv_1_3x3 = nn.Conv2d(n_dim, 64, 3, 1, 1, bias=False)
+        self.conv_1_3x3 = nn.Conv2d(2, 64, 3, 1, 1, bias=False)
         self.bn_1 = nn.BatchNorm2d(64)
 
         self.inplanes = 64
@@ -74,9 +72,7 @@ class GenericResNeXt(nn.Module):
         self.stage_2 = self._make_layer(block, 128, layer_blocks, 2)
         self.stage_3 = self._make_layer(block, 256, layer_blocks, 2)
         self.avgpool = nn.AvgPool2d(8)
-        self.classifier = nn.Linear(4096, num_classes)
-
-        self.sig = nn.Sigmoid()
+        self.classifier = nn.Linear(256 * block.expansion, num_classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -115,10 +111,7 @@ class GenericResNeXt(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         # print(x.data.shape)
-        x = self.classifier(x)
-        if self.num_classes == 1:  # BCE Loss,
-            x = self.sig(x)
-        return x
+        return F.sigmoid(self.classifier(x))
 
 
 def resnext29_16_64(num_classes=1):
@@ -127,18 +120,15 @@ def resnext29_16_64(num_classes=1):
     Args:
       num_classes (uint): number of classes
     """
-    model = GenericResNeXt(ResNeXtBottleneck, 29, 16, 64, num_classes)
+    model = CifarResNeXt(ResNeXtBottleneck, 29, 16, 64, num_classes)
     return model
 
 
-def resnetxtXX_generic(num_classes, n_dim):
-    # block, depth, cardinality, base_width
-    model = GenericResNeXt(ResNeXtBottleneck, 29, 4, 4, num_classes=num_classes, n_dim=n_dim)  # 56
+def resnext29_8_64(num_classes=1):
+    """Constructs a ResNeXt-29, 8*64d model for CIFAR-10 (by default)
+    
+    Args:
+      num_classes (uint): number of classes
+    """
+    model = CifarResNeXt(ResNeXtBottleneck, 29, 8, 64, num_classes)
     return model
-
-
-def resnext(**kwargs):
-    """
-    Constructs a ResNet model.
-    """
-    return GenericResNeXt(**kwargs)
