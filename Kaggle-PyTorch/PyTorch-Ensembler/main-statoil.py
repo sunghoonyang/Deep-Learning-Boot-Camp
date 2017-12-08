@@ -186,7 +186,7 @@ if __name__ == '__main__':
     trainloader, testloader, trainset, testset = loadDB(args)
     # for i in tqdm(range(0, 51)):
     for i in range(0, 100):
-        models = ['senet']
+        models = ['senet','resnext','simple']
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)
@@ -233,7 +233,7 @@ if __name__ == '__main__':
             recorder = RecorderMeter(args.epochs)  # epoc is updated
 
             val_result, train_result = BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=True)
-            if (float(val_result) < float(0.155) and float(train_result) < float(0.155)):
+            if (float(val_result) < float(0.165) and float(train_result) < float(0.165)):
                 df_pred = BinaryInference(model)
                 savePred(df_pred, model, val_result, train_result, args.save_path_model)
 

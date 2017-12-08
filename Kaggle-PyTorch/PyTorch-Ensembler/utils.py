@@ -509,11 +509,11 @@ def selectModel(args, m):
     model = None
     print("==> Creating model '{}'".format(m))
     if m.startswith('senet'):  # block, n_size=1, num_classes=1, num_rgb=2, base=32
-        model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
-        # model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
+        # model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
+        model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 77
+        args.epochs = 56
         args.lr =  0.0005 # do not change !!! optimal for the Statoil data set
 
     if m.startswith('densenet'):
