@@ -137,7 +137,7 @@ def validate(val_loader, model, criterion, args):
     acc = AverageMeter()
 
     # switch to evaluate mode
-    model.eval()
+    # model.eval()
 
     end = time.time()
     for i, (images, labels) in enumerate(val_loader):
@@ -324,7 +324,7 @@ def testModel(test_dir, local_model, sample_submission):
 if __name__ == '__main__':
 
     # tensorboad
-    use_tensorboard = True
+    use_tensorboard = False
     # use_tensorboard = True and CrayonClient is not None
 
     if use_tensorboard == True:
@@ -333,7 +333,7 @@ if __name__ == '__main__':
 
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
-    models = ['wrn']
+    models = ['simple']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -370,18 +370,13 @@ if __name__ == '__main__':
 
             criterion = torch.nn.CrossEntropyLoss()  # multi class
             # optimizer = torch.optim.Adam(model.parameters(), args.lr)  # L2 regularization
-            optimizer = torch.optim.Adam(model.parameters(), lr=0.00005 * 2 * 2)
+            optimizer = torch.optim.Adam(model.parameters(), lr=0.05)
 
-
-            # recorder = RecorderMeter(args.epochs)  # epoc is updated
 
             for epoch in tqdm(range(args.start_epoch, args.epochs)):
                 train_result, accuracy_tr = train(trainloader, model, criterion, optimizer, args)
                 # evaluate on validation set
                 val_result, accuracy_val = validate(valloader, model, criterion,args)
-
-                # train(trainloader, model, epoch, optimizer)
-                # test_loss, accuracy_val = test(valloader, model, epoch)
 
                 recorder.update(epoch, train_result, accuracy_tr, val_result, accuracy_val)
                 mPath = args.save_path_model + '/'
@@ -390,7 +385,7 @@ if __name__ == '__main__':
                 recorder.plot_curve(os.path.join(mPath, model_name + '_' + runId + '.png'), args, model)
 
 
-                if (float(accuracy_val) > float(85.0)):
+                if (float(accuracy_val) > float(90.0)):
                     print ("*** EARLY STOPPING ***")
                     s_submission = pd.read_csv(args.data_path + 'sample_submission.csv')
                     s_submission.columns = ['file', 'species']
