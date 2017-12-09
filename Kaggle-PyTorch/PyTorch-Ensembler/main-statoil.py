@@ -7,7 +7,7 @@ import torch.backends.cudnn as cudnn
 from tqdm import tqdm
 
 from utils import *
-from losses import Eve
+# from losses import Eve
 
 model_names = sorted(name for name in nnmodels.__dict__
                      if name.islower() and not name.startswith("__")
