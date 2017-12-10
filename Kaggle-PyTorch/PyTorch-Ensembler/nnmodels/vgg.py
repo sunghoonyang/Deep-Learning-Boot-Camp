@@ -16,7 +16,7 @@ class VGG(nn.Module):
         super(VGG, self).__init__()
         self.features = self._make_layers(cfg[vgg_name], num_rgb)
         if(num_classes==1):
-            self.classifier = nn.Linear(1024, num_classes)
+            self.classifier = nn.Linear(2048, num_classes)
         else:
             self.classifier = nn.Linear(25088, num_classes)
         self.sig = nn.Sigmoid()
@@ -24,7 +24,7 @@ class VGG(nn.Module):
     def forward(self, x):
         out = self.features(x)
         out = out.view(out.size(0), -1)
-        # print (out.data.size())
+        print (out.data.size())
         out = self.classifier(out)
         # out = self.sig(out)
         return out
