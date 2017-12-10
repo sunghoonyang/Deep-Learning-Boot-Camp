@@ -132,7 +132,7 @@ def se_resnet152(num_classes):
     return model
 
 
-REDUCTION=8
+REDUCTION=32
 
 class SELayer(nn.Module):
     def __init__(self, channel, reduction=REDUCTION):

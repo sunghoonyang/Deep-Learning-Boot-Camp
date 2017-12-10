@@ -154,7 +154,7 @@ def BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=False):
             savePred(df_pred, model, str(val_result) + '_' + str(epoch), train_result, args.save_path_model)
             # break
             continue
-            # adjust_learning_rate(optimizer, epoch)
+        adjust_learning_rate(optimizer, epoch, args)
 
     tqdm.write('TRAIN Loss: {:.6f}'.format(running_loss / (len(trainset))), log)
     tqdm.write('VALIDATION Loss: {:.6f}'.format(eval_loss / (len(testset))), log)

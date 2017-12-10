@@ -49,6 +49,6 @@ class VGG(nn.Module):
 # x = torch.randn(2,3,32,32)
 # print(net(Variable(x)).size())
 
-def vggnetXX_generic(num_classes, num_rgb):
-    model = VGG('VGG16', num_classes, num_rgb)  # 56
+def vggnetXX_generic(num_classes, num_rgb,type='VGG16'):
+    model = VGG(type, num_classes, num_rgb)  # 56
     return model
