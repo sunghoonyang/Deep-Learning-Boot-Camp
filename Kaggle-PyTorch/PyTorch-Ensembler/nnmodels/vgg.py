@@ -15,7 +15,10 @@ class VGG(nn.Module):
     def __init__(self, vgg_name, num_classes, num_rgb):
         super(VGG, self).__init__()
         self.features = self._make_layers(cfg[vgg_name], num_rgb)
-        self.classifier = nn.Linear(25088, num_classes)
+        if(num_classes==1):
+            self.classifier = nn.Linear(1024, num_classes)
+        else:
+            self.classifier = nn.Linear(25088, num_classes)
         self.sig = nn.Sigmoid()
 
     def forward(self, x):
@@ -46,5 +49,5 @@ class VGG(nn.Module):
 # print(net(Variable(x)).size())
 
 def vggnetXX_generic(num_classes, num_rgb):
-    model = VGG('VGG19', num_classes, num_rgb)  # 56
+    model = VGG('VGG16', num_classes, num_rgb)  # 56
     return model

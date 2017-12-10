@@ -385,7 +385,7 @@ class RecorderMeter(object):
 
         dpi = 80
         width, height = 1200, 800
-        legend_fontsize = 6
+        legend_fontsize = 14
         scale_distance = 48.8
         figsize = width / float(dpi), height / float(dpi)
 
@@ -513,7 +513,7 @@ def selectModel(args, m):
         model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 56
+        args.epochs = 76
         args.lr =  0.0005 # do not change !!! optimal for the Statoil data set
 
     if m.startswith('densenet'):
@@ -539,6 +539,7 @@ def selectModel(args, m):
         args.batch_size = 16
         args.batch_size = 16
         args.epochs = 66
+        args.lr = 0.0005
     if m.startswith('lenet'):
         model = nnmodels.lenetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
@@ -573,6 +574,8 @@ def selectModel(args, m):
 
 
 def BinaryInference(local_model, args):
+    if args.use_cuda:
+        local_model.cuda()
     local_model.eval()
     df_test_set = pd.read_json(args.data_path + '/test.json')
     df_test_set['band_1'] = df_test_set['band_1'].apply(lambda x: np.array(x).reshape(75, 75))

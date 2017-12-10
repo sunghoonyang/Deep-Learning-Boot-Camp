@@ -212,6 +212,7 @@ train_trans = transforms.Compose([
     PowerPIL(),
     transforms.ToTensor(),
     normalize_img,
+    RandomErasing()
 ])
 
 ## Normalization only for validation and test
@@ -251,28 +252,43 @@ def testModel(test_dir, local_model, sample_submission):
         local_model.cuda()
     local_model.eval()
 
-
     df_pred = pd.DataFrame(data=np.zeros((0, len(columns))), columns=columns)
-    #     df_pred.species.astype(int)
+    df_pred['id'].astype(int)
     for index, row in (sample_submission.iterrows()):
         #         for file in os.listdir(test_dir):
-        currImage = os.path.join(test_dir, str(int(row['id'])) + '.jpg')
+        int_id=int(row['id'])
+        currImage = os.path.join(test_dir, str(int(int_id)) + '.jpg')
         if os.path.isfile(currImage):
             X_tensor_test = testImageLoader(currImage)
             if args.use_cuda:
                 X_tensor_test = Variable(X_tensor_test.cuda())
             else:
                 X_tensor_test = Variable(X_tensor_test)
-            predicted_val = (local_model(X_tensor_test)).data.max(1)[1]  # get the index of the max log-probability
-            p_test = (predicted_val.cpu().numpy().item())
-            df_pred = df_pred.append({'id': int(row['id']), 'label': num_to_class[int(p_test)]}, ignore_index=True)
 
+            y_pred = model(X_tensor_test)
+            # predicted_val = (local_model(X_tensor_test)).data.max(1)[1]  # get the index of the max log-probability
+            # get the index of the max log-probability
+            smax = nn.Softmax()
+            smax_out = smax(y_pred)[0]
+            cat_prob = smax_out.data[0]
+            dog_prob = smax_out.data[1]
+            prob = dog_prob
+            if cat_prob > dog_prob:
+                prob = 1 - cat_prob
+            prob = np.around(prob, decimals=6)
+            prob = np.clip(prob, .0001, .999)
+
+            # p_test = (predicted_val.cpu().numpy().item())
+            # df_pred = df_pred.append({'id': int(row['id']), 'label': num_to_class[int(p_test)]}, ignore_index=True) # for lables
+            df_pred = df_pred.append({'id': int(int_id), 'label': prob}, ignore_index=True) # for proba
+
+    df_pred['id'].astype(int)
     return df_pred
 
 if __name__ == '__main__':
 
     # tensorboad
-    use_tensorboard = True
+    use_tensorboard = False
     # use_tensorboard = True and CrayonClient is not None
 
     if use_tensorboard == True:
@@ -281,7 +297,7 @@ if __name__ == '__main__':
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Çlasses {}'.format(classes))
-    models = ['senet']
+    models = ['simplenet']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -324,21 +340,18 @@ if __name__ == '__main__':
                 optimizer = torch.optim.SGD(model.parameters(), args.lr, momentum=state['momentum'],
                                             weight_decay=state['weight_decay'], nesterov=True)
 
-            # recorder = RecorderMeter(args.epochs)  # epoc is updated
-
             for epoch in tqdm(range(args.start_epoch, args.epochs)):
                 train_result, accuracy_tr = train(trainloader, model, criterion, optimizer, args)
                 # evaluate on validation set
-                val_result, accuracy_val = validate(valloader, model, criterion,args)
+                val_loss, accuracy_val = validate(valloader, model, criterion,args)
 
-                recorder.update(epoch, train_result, accuracy_tr, val_result, accuracy_val)
+                recorder.update(epoch, train_result, accuracy_tr, val_loss, accuracy_val)
                 mPath = args.save_path_model + '/'
                 if not os.path.isdir(mPath):
                     os.makedirs(mPath)
                 recorder.plot_curve(os.path.join(mPath, model_name + '_' + runId + '.png'), args, model)
 
-
-                if (float(accuracy_val) > float(75.0)):
+                if (float(val_loss) < float(0.15)):
                     print ("*** EARLY STOPPING ***")
                     s_submission = pd.read_csv('catdog-sample_submission.csv')
                     s_submission.columns = columns
@@ -347,8 +360,9 @@ if __name__ == '__main__':
                     pre = args.save_path_model + '/' + '/pth/'
                     if not os.path.isdir(pre):
                         os.makedirs(pre)
-                    fName = pre + str(accuracy_val)
+                    fName = pre + str(val_loss)
                     torch.save(model.state_dict(), fName + '_cnn.pth')
                     csv_path = str(fName + '_submission.csv')
+                    df_pred['id'] = df_pred['id'].astype(int)
                     df_pred.to_csv(csv_path, columns=('id', 'label'), index=None)
                     print(csv_path)

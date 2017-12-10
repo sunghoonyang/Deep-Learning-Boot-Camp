@@ -30,6 +30,10 @@ def draw(img, boxes):
         draw.rectangle(list(box), outline='red')
     img.show()
 
+def draw2(img):
+    img.show()
+
+
 class GroupRandomCrop(object):
     def __init__(self, size):
         if isinstance(size, numbers.Number):
