@@ -135,7 +135,6 @@ def resnetxtXX_generic(num_classes, n_dim):
     model = GenericResNeXt(ResNeXtBottleneck, 29, 4, 4, num_classes=num_classes, n_dim=n_dim)  # 56
     return model
 
-
 def resnext(**kwargs):
     """
     Constructs a ResNet model.
