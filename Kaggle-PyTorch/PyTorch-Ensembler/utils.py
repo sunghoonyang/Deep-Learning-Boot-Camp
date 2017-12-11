@@ -520,7 +520,7 @@ def selectModel(args, m):
         model = nnmodels.densnetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 55
+        args.epochs = 32
         args.lr = 0.05
     if m.startswith('minidensenet'):
         model = nnmodels.minidensnetXX_generic(args.num_classes, args.imgDim)
