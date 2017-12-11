@@ -94,7 +94,7 @@ class SimpleNet(nn.Module):
         )
 
         self.classifier = torch.nn.Sequential(
-            nn.Linear(2304, (num_classes)),
+            nn.Linear(1024, (num_classes)),
         )
 
     #         self.sig=nn.Sigmoid()
@@ -102,7 +102,7 @@ class SimpleNet(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)
-        #         print (x.data.shape)
+        # print (x.data.shape)
         x = self.classifier(x)
         #         x = self.sig(x)
         return x
