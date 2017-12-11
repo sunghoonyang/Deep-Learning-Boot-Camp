@@ -527,7 +527,7 @@ def selectModel(args, m):
         args.batch_size = 32
         args.batch_size = 32
         args.epochs = 35
-        args.lr = 0.000 * 2
+        args.lr = 0.005 * 2
     if m.startswith('vggnet'):
         model = nnmodels.vggnetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
