@@ -80,6 +80,7 @@ class MiniDenseNet(nn.Module):
         self.fc = nn.Linear(432, nClasses)
 
         self.sig = nn.Sigmoid()
+        self.num_classes =nClasses
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):

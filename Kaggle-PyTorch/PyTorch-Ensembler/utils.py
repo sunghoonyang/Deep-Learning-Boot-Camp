@@ -526,8 +526,8 @@ def selectModel(args, m):
         model = nnmodels.minidensnetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 32
         args.batch_size = 32
-        args.epochs = 76
-        args.lr = 0.0005 * 2
+        args.epochs = 35
+        args.lr = 0.000 * 2
     if m.startswith('vggnet'):
         model = nnmodels.vggnetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
