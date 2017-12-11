@@ -104,7 +104,8 @@ class SimpleNet(nn.Module):
         x = x.view(x.size(0), -1)
         # print (x.data.shape)
         x = self.classifier(x)
-        #         x = self.sig(x)
+        if (self.num_classes == 1):
+                x = self.sig(x)
         return x
 
     #         return F.log_softmax(x)
