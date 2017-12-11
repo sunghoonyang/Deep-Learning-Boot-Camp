@@ -8,6 +8,7 @@ from tqdm import tqdm
 
 from utils import *
 # from losses import Eve
+from pycrayon import *
 
 model_names = sorted(name for name in nnmodels.__dict__
                      if name.islower() and not name.startswith("__")
@@ -60,7 +61,8 @@ parser.add_argument('--ngpu', type=int, default=1, help='0 = CPU.')
 parser.add_argument('--workers', type=int, default=0, help='number of data loading workers (default: 0)')
 # random seed
 parser.add_argument('--manualSeed', type=int, default=999, help='manual seed')
-
+parser.add_argument('--use_tensorboard', type=bool, default=True, help='Log to tensorboard')
+parser.add_argument('--tensorboard_ip', type=str, default='http://192.168.0.2', help='tensorboard IP')
 args = parser.parse_args()
 
 state = {k: v for k, v in args._get_kwargs()}
@@ -137,6 +139,12 @@ def BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=False):
             tqdm.write('-->LOSS T/V:[{:.6f}/{:.6f}%], ACC T/V:[{:.6f}/{:.6f}%]'.format(running_loss / (len(trainset)),
                                                                                        eval_loss / (len(testset)),
                                                                                        accuracy_tr, accuracy_val))
+            if args.use_tensorboard:
+                exp.add_scalar_value('tr_epoch_loss', running_loss / (len(trainset)), step=epoch)
+                exp.add_scalar_value('tr_epoch_acc', accuracy_tr, step=epoch)
+
+                exp.add_scalar_value('val_epoch_loss',  eval_loss / (len(testset)), step=epoch)
+                exp.add_scalar_value('val_epoch_acc', accuracy_val, step=epoch)
 
         val_result = float('{:.6f}'.format(eval_loss / (len(testset))))
         train_result = float('{:.6f}'.format(running_loss / (len(trainset))))
@@ -158,6 +166,7 @@ def BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=False):
 
     tqdm.write('TRAIN Loss: {:.6f}'.format(running_loss / (len(trainset))), log)
     tqdm.write('VALIDATION Loss: {:.6f}'.format(eval_loss / (len(testset))), log)
+
     val_result = '{:.6f}'.format(eval_loss / (len(testset)))
     train_result = '{:.6f}'.format(running_loss / (len(trainset)))
 
@@ -177,6 +186,10 @@ def loadDB(args):
 
 if __name__ == '__main__':
 
+    if args.use_tensorboard == True:
+        cc = CrayonClient(hostname=args.tensorboard_ip)
+        cc.remove_all_experiments()
+
     # ensembleVer2('./pth_old/raw/iceResNet/', './pth_old/ens2/ens_ice800files.csv')
     # MinMaxBestBaseStacking('./pth_old/2020/', './pth_old/2020/0.1339.csv','./pth_old/2020/final_mix_900_files_base01344.csv')
     # ensembleVer2('./log/statoil/IceResNet/pth', './ens_ice_98989898989898989.csv')
@@ -186,14 +199,18 @@ if __name__ == '__main__':
     trainloader, testloader, trainset, testset = loadDB(args)
     # for i in tqdm(range(0, 51)):
     for i in range(0, 50):
-        models = [ 'senet','minidensenet','densenet']
+        models = ['densenet']
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)
             model = selectModel(args, m)
             model_name = (type(model).__name__)
-            # if model_name =='NoneType':
-            #     EXIT
+
+            exp_name = datetime.datetime.now().strftime(model_name + '_' + args.dataset + '_%Y-%m-%d_%H-%M-%S')
+            if args.use_tensorboard == True:
+                exp = cc.create_experiment(exp_name)
+
+
             mPath = args.save_path + '/' + args.dataset + '/' + model_name + '/'
             args.save_path_model = mPath
             if not os.path.isdir(args.save_path_model):
@@ -207,7 +224,9 @@ if __name__ == '__main__':
             print_log("cudnn  version : {}".format(torch.backends.cudnn.version()), log)
             print_log("LR :" + str(args.lr), log)
             print_log("Available models:" + str(model_names), log)
-            print_log("=> Final model name '{}'".format(model_name), log)
+            print_log("=> Final model name: '{}'".format(model_name), log)
+            print_log("=> Log to TENSORBOARD: '{}'".format(args.use_tensorboard), log)
+            print_log("=> TENSORBOARD ip:'{}'".format(args.tensorboard_ip), log)
             # print_log("=> Full model '{}'".format(model), log)
             # model = torch.nn.DataParallel(model).cuda()
             model.cuda()

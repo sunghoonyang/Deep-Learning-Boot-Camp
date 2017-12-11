@@ -518,9 +518,9 @@ def selectModel(args, m):
 
     if m.startswith('densenet'):
         model = nnmodels.densnetXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 64
-        args.batch_size = 64
-        args.epochs = 32
+        args.batch_size = 32
+        args.batch_size = 32
+        args.epochs = 30
         args.lr = 0.05
     if m.startswith('minidensenet'):
         model = nnmodels.minidensnetXX_generic(args.num_classes, args.imgDim)
