@@ -520,7 +520,7 @@ def selectModel(args, m):
         model = nnmodels.densnetXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 64
         args.batch_size = 64
-        args.epochs = 75
+        args.epochs = 55
         args.lr = 0.05
     if m.startswith('minidensenet'):
         model = nnmodels.minidensnetXX_generic(args.num_classes, args.imgDim)
@@ -550,25 +550,26 @@ def selectModel(args, m):
         model = nnmodels.wrnXX_generic(args.num_classes, args.imgDim)
         args.batch_size = 16
         args.batch_size = 16
-        args.epochs = 56
+        args.epochs = 34
+        args.lr = 0.0005*2
 
     if m.startswith('simple'):
         model = nnmodels.simpleXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 128
-        args.batch_size = 128
+        args.batch_size = 256
+        args.batch_size = 256
         args.epochs = 120
 
-    if m.startswith('unet'):
-        model = nnmodels.unetXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 64
-        args.batch_size = 64
-        args.epochs = 50
+    # if m.startswith('unet'):
+    #     model = nnmodels.unetXX_generic(args.num_classes, args.imgDim)
+    #     args.batch_size = 64
+    #     args.batch_size = 64
+    #     args.epochs = 50
 
-    if m.startswith('link'):
-        model = nnmodels.linknetXX_generic(args.num_classes, args.imgDim)
-        args.batch_size = 64
-        args.batch_size = 64
-        args.epochs = 50
+    # if m.startswith('link'):
+    #     model = nnmodels.linknetXX_generic(args.num_classes, args.imgDim)
+    #     args.batch_size = 64
+    #     args.batch_size = 64
+    #     args.epochs = 50
 
     return model
 

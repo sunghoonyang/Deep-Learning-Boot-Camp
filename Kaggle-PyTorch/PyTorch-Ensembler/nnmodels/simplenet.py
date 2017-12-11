@@ -77,14 +77,14 @@ class ConvCNN(nn.Module):
 class SimpleNet(nn.Module):
     def __init__(self,num_classes, n_dim):
         super(SimpleNet, self).__init__()
-
+        self.num_classes=num_classes
         self.avgpool = nn.AdaptiveAvgPool2d(1)
 
-        self.cnn1 = ConvCNN(n_dim, 64, kernel_size=7, pool=4, avg=False)
-        self.cnn2 = ConvCNN(64, 64, kernel_size=5, pool=2, avg=True)
-        self.cnn3 = ConvCNN(64, 256, kernel_size=5, pool=2, avg=True)
+        self.cnn1 = ConvCNN (n_dim,32,  kernel_size=7, pool=4, avg=False)
+        self.cnn2 = ConvCNN (32,32, kernel_size=5, pool=2, avg=True)
+        self.cnn3 = ConvCNN (32,32, kernel_size=5, pool=2, avg=True)
 
-        self.res1 = ConvRes(256, 64)
+        self.res1 = ConvRes (32,64)
 
         self.features = nn.Sequential(
             self.cnn1, dropout,
@@ -97,7 +97,7 @@ class SimpleNet(nn.Module):
             nn.Linear(1024, (num_classes)),
         )
 
-    #         self.sig=nn.Sigmoid()
+        self.sig=nn.Sigmoid()
 
     def forward(self, x):
         x = self.features(x)
