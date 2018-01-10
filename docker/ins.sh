@@ -9,16 +9,14 @@ apt-get update && apt-get install --no-install-recommends  -y \
     python-wheel \
 	python-tk \
     pkg-config \
-    # requirements for numpy
-    libopenblas-base \
+    # requirements for numpy    
     python-numpy \
     python-scipy \
     # requirements for keras
     python-h5py \
     python-yaml \
     python-pydot \
-    python-nose \
-	python-h5py \
+    python-nose \	
 	python-skimage \
 	python-matplotlib \
 	python-pandas \
@@ -44,8 +42,7 @@ apt-get update && apt-get install --no-install-recommends  -y \
 		libfreetype6-dev \
 		libhdf5-dev \
 		libjpeg-dev \
-		liblcms2-dev \
-		libopenblas-dev \
+		liblcms2-dev \		
 		liblapack-dev \
 		libssl-dev \
 		libtiff5-dev \
