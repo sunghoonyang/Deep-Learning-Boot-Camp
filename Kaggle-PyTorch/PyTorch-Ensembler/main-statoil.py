@@ -37,7 +37,7 @@ parser.add_argument('--dataset', type=str, default='statoil', choices=['statoil'
 parser.add_argument('--imgDim', default=2, type=int, help='number of Image input dimensions')
 parser.add_argument('--base_factor', default=32, type=int, help='SENet base factor')
 
-parser.add_argument('--epochs', type=int, default=3, help='Number of epochs to train.')
+parser.add_argument('--epochs', type=int, default=66, help='Number of epochs to train.')
 parser.add_argument('--current_time', type=str, default=datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
                     help='Current time.')
 
@@ -258,7 +258,7 @@ if __name__ == '__main__':
                 #df_pred = BinaryInference(model)
             df_pred_oof, df_pred_test = BinaryInferenceOofAndTest(model,args,n_folds=n_folds,current_fold=i)
             oof = pd.concat([oof,pd.DataFrame(df_pred_oof)],axis=0)
-            savePred(df_pred, model, val_result, train_result, args.save_path_model)
+            savePred(df_pred_test, model, val_result, train_result, args.save_path_model)
             logger.close()
             logger.plot()
     oof.to_csv('./oof_preds.csv')

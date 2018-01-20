@@ -638,7 +638,8 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
         if i<current_fold:
             pass
         else:
-            df_val_set = df_val_set.iloc[val_ind,:].reset_index(drop=True)
+            df_val_set = df_val_set.iloc[val_ind,:]
+            break
             
     df_val_set['band_1'] = df_val_set['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
     df_val_set['band_2'] = df_val_set['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
@@ -664,8 +665,8 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
         # X_tensor_test=X_tensor_test.view(1, trainX.shape[1]) # does not work with 1d tensors
         predicted_val = (local_model(X_tensor_test).data).float()  # probabilities
         p_test = predicted_val.cpu().numpy().item()  # otherwise we get an array, we need a single float
-        if row['id'] in oof_ids:
-            df_pred_val = df_pred_val.append({'id': row['id'], 'is_iceberg': p_test}, ignore_index=True)
+        
+        df_pred_val = df_pred_val.append({'id': row['id'], 'is_iceberg': p_test}, ignore_index=True)
 
     return df_pred_val, df_pred_test
 
