@@ -638,7 +638,7 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
         if i<current_fold:
             pass
         else:
-            df_val_set = df_val_set.iloc[train_ind,:]
+            df_val_set = df_val_set.iloc[val_ind,:].reset_index(drop=True)
             
     df_val_set['band_1'] = df_val_set['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
     df_val_set['band_2'] = df_val_set['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
