@@ -473,11 +473,11 @@ def fixSeed(args):
         torch.cuda.manual_seed_all(args.manualSeed)
 
 
-def getStatoilTrainValLoaders(args,folds=5,current_fold=0):
+def getStatoilTrainValLoaders(args,n_folds=5,current_fold=0):
     fixSeed(args)
     local_data = pd.read_json(args.data_path + '/train.json')
     
-    skf = StratifiedKFold(n_splits=5,random_state=2018)
+    skf = StratifiedKFold(n_splits=n_folds,random_state=2018)
     x=local_data['id'].values
     y=local_data['is_iceberg'].values
     for i,(train_ind,val_ind) in enumerate(skf.split(X=x,y=y)):
@@ -486,6 +486,7 @@ def getStatoilTrainValLoaders(args,folds=5,current_fold=0):
         else:
             tr_data = local_data.iloc[train_ind,:]
             val_data = local_data.iloc[val_ind,:]
+            break
     
     # local_data = shuffle(local_data)  # otherwise same validation set each time!
     # local_data = local_data.reindex(np.random.permutation(local_data.index))
