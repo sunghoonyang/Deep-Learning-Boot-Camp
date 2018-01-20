@@ -7,7 +7,7 @@ from __future__ import print_function, absolute_import
 
 import errno
 import time
-
+import numpy as np
 import matplotlib
 import torch.nn as nn
 import torch.nn.init as init
@@ -17,10 +17,9 @@ import matplotlib.pyplot as plt
 import os
 import datetime
 import pandas as pd
-from torch.utils.data import TensorDataset
-
 import torch.nn.parallel
 from sklearn.utils import shuffle
+from sklearn.model_selection import StratifiedKFold
 from torch.autograd import Variable
 from torch.utils.data import TensorDataset
 from torchvision.transforms import *
@@ -227,9 +226,7 @@ def trainTestSplit(dataset, val_share):
     val_offset = int(len(dataset) * (1 - val_share))
     # print("Offest:" + str(val_offset))
     return TrainningValidationSplitDataset(dataset, 0, val_offset), TrainningValidationSplitDataset(dataset, val_offset,
-                                                                                                    len(
-                                                                                                        dataset) - val_offset)
-
+                                                                                                    len(dataset) - val_offset)
 
 def createNewDir(BASE_FOLDER):
     parquet_dir = os.path.join(BASE_FOLDER, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
@@ -476,28 +473,55 @@ def fixSeed(args):
         torch.cuda.manual_seed_all(args.manualSeed)
 
 
-def getStatoilTrainValLoaders(args):
+def getStatoilTrainValLoaders(args,folds=5,current_fold=0):
     fixSeed(args)
     local_data = pd.read_json(args.data_path + '/train.json')
+    
+    skf = StratifiedKFold(n_splits=5,random_state=2018)
+    x=local_data['id'].values
+    y=local_data['is_iceberg'].values
+    for i,(train_ind,val_ind) in enumerate(skf.split(X=x,y=y)):
+        if i<current_fold:
+            pass
+        else:
+            tr_data = local_data.iloc[train_ind,:]
+            val_data = local_data.iloc[val_ind,:]
+    
+    # local_data = shuffle(local_data)  # otherwise same validation set each time!
+    # local_data = local_data.reindex(np.random.permutation(local_data.index))
 
-    local_data = shuffle(local_data)  # otherwise same validation set each time!
-    local_data = local_data.reindex(np.random.permutation(local_data.index))
+    tr_data['band_1'] = tr_data['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
+    tr_data['band_2'] = tr_data['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
+    tr_data['inc_angle'] = pd.to_numeric(tr_data['inc_angle'], errors='coerce')
+    tr_data['inc_angle'].fillna(0, inplace=True)
+    
+    val_data['band_1'] = val_data['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
+    val_data['band_2'] = val_data['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
+    val_data['inc_angle'] = pd.to_numeric(val_data['inc_angle'], errors='coerce')
+    val_data['inc_angle'].fillna(0, inplace=True)
 
-    local_data['band_1'] = local_data['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
-    local_data['band_2'] = local_data['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
-    local_data['inc_angle'] = pd.to_numeric(local_data['inc_angle'], errors='coerce')
-    local_data['inc_angle'].fillna(0, inplace=True)
-
-    band_1 = np.concatenate([im for im in local_data['band_1']]).reshape(-1, 75, 75)
-    band_2 = np.concatenate([im for im in local_data['band_2']]).reshape(-1, 75, 75)
+    band_1_tr = np.concatenate([im for im in tr_data['band_1']]).reshape(-1, 75, 75)
+    band_2_tr = np.concatenate([im for im in tr_data['band_2']]).reshape(-1, 75, 75)    
     # band_3=(band_1+band_2)/2
-    local_full_img = np.stack([band_1, band_2], axis=1)
+    local_full_img_tr = np.stack([band_1_tr, band_2_tr], axis=1)
 
-    train_imgs = XnumpyToTensor(local_full_img, args)
-    train_targets = YnumpyToTensor(local_data['is_iceberg'].values, args)
+    band_1_val = np.concatenate([im for im in val_data['band_1']]).reshape(-1, 75, 75)
+    band_2_val = np.concatenate([im for im in val_data['band_2']]).reshape(-1, 75, 75)
+    # band_3=(band_1+band_2)/2
+    local_full_img_val = np.stack([band_1_val, band_2_val], axis=1)
+    
+    
+    train_imgs = XnumpyToTensor(local_full_img_tr, args)
+    train_targets = YnumpyToTensor(tr_data['is_iceberg'].values, args)
     dset_train = TensorDataset(train_imgs, train_targets)
+    
+    val_imgs = XnumpyToTensor(local_full_img_val, args)
+    val_targets = YnumpyToTensor(val_data['is_iceberg'].values, args)
+    dset_val = TensorDataset(val_imgs, val_targets)
 
-    local_train_ds, local_val_ds = trainTestSplit(dset_train, args.validationRatio)
+    # local_train_ds, local_val_ds = trainTestSplit(dset_train, args.validationRatio)
+    
+    local_train_ds, local_val_ds = dset_train, dset_val
     local_train_loader = torch.utils.data.DataLoader(local_train_ds, batch_size=args.batch_size, shuffle=False,
                                                      num_workers=args.workers)
     local_val_loader = torch.utils.data.DataLoader(local_val_ds, batch_size=args.batch_size, shuffle=False,
@@ -572,6 +596,78 @@ def selectModel(args, m):
     #     args.epochs = 50
 
     return model
+
+def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
+    if args.use_cuda:
+        local_model.cuda()
+    local_model.eval()
+    df_test_set = pd.read_json(args.data_path + '/test.json')
+    df_test_set['band_1'] = df_test_set['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
+    df_test_set['band_2'] = df_test_set['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
+    df_test_set['inc_angle'] = pd.to_numeric(df_test_set['inc_angle'], errors='coerce')
+    # df_test_set.head(3)
+    print(df_test_set.shape)
+    columns = ['id', 'is_iceberg']
+    df_pred_test = pd.DataFrame(data=np.zeros((0, len(columns))), columns=columns)
+    # df_pred.id.astype(int)
+    for index, row in df_test_set.iterrows():
+        rwo_no_id = row.drop('id')
+        band_1_test = (rwo_no_id['band_1']).reshape(-1, 75, 75)
+        band_2_test = (rwo_no_id['band_2']).reshape(-1, 75, 75)
+        # band_3_test = (band_1_test + band_2_test) / 2
+        full_img_test = np.stack([band_1_test, band_2_test], axis=1)
+
+        x_data_np = np.array(full_img_test, dtype=np.float32)
+        if args.use_cuda:
+            X_tensor_test = Variable(torch.from_numpy(x_data_np).cuda())  # Note the conversion for pytorch
+        else:
+            X_tensor_test = Variable(torch.from_numpy(x_data_np))  # Note the conversion for pytorch
+
+        # X_tensor_test=X_tensor_test.view(1, trainX.shape[1]) # does not work with 1d tensors
+        predicted_val = (local_model(X_tensor_test).data).float()  # probabilities
+        p_test = predicted_val.cpu().numpy().item()  # otherwise we get an array, we need a single float
+
+        df_pred_test = df_pred_test.append({'id': row['id'], 'is_iceberg': p_test}, ignore_index=True)
+        
+    df_val_set = pd.read_json(args.data_path + '/train.json')
+    
+    skf = StratifiedKFold(n_splits=n_folds,random_state=2018)
+    x=df_val_set['id'].values
+    y=df_val_set['is_iceberg'].values
+    for i,(train_ind,val_ind) in enumerate(skf.split(X=x,y=y)):
+        if i<current_fold:
+            pass
+        else:
+            df_val_set = df_val_set.iloc[train_ind,:]
+            
+    df_val_set['band_1'] = df_val_set['band_1'].apply(lambda x: np.array(x).reshape(75, 75))
+    df_val_set['band_2'] = df_val_set['band_2'].apply(lambda x: np.array(x).reshape(75, 75))
+    df_val_set['inc_angle'] = pd.to_numeric(df_val_set['inc_angle'], errors='coerce')
+    # df_test_set.head(3)
+    print(df_val_set.shape)
+    columns = ['id', 'is_iceberg']
+    df_pred_val = pd.DataFrame(data=np.zeros((0, len(columns))), columns=columns)
+    # df_pred.id.astype(int)
+    for index, row in df_test_set.iterrows():
+        rwo_no_id = row.drop('id')
+        band_1_test = (rwo_no_id['band_1']).reshape(-1, 75, 75)
+        band_2_test = (rwo_no_id['band_2']).reshape(-1, 75, 75)
+        # band_3_test = (band_1_test + band_2_test) / 2
+        full_img_test = np.stack([band_1_test, band_2_test], axis=1)
+
+        x_data_np = np.array(full_img_test, dtype=np.float32)
+        if args.use_cuda:
+            X_tensor_test = Variable(torch.from_numpy(x_data_np).cuda())  # Note the conversion for pytorch
+        else:
+            X_tensor_test = Variable(torch.from_numpy(x_data_np))  # Note the conversion for pytorch
+
+        # X_tensor_test=X_tensor_test.view(1, trainX.shape[1]) # does not work with 1d tensors
+        predicted_val = (local_model(X_tensor_test).data).float()  # probabilities
+        p_test = predicted_val.cpu().numpy().item()  # otherwise we get an array, we need a single float
+        if row['id'] in oof_ids:
+            df_pred_val = df_pred_val.append({'id': row['id'], 'is_iceberg': p_test}, ignore_index=True)
+
+    return df_pred_val, df_pred_test
 
 
 def BinaryInference(local_model, args):

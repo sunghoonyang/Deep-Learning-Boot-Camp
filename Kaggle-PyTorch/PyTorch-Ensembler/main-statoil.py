@@ -5,11 +5,11 @@ import sys
 
 import torch.backends.cudnn as cudnn
 from tqdm import tqdm
-
+import numpy as np
 from utils import *
 # from losses import Eve
-from pycrayon import *
-
+# from pycrayon import *
+n_folds = 10
 model_names = sorted(name for name in nnmodels.__dict__
                      if name.islower() and not name.startswith("__")
                      and callable(nnmodels.__dict__[name]))
@@ -24,7 +24,7 @@ parser.add_argument('--lr_period', default=10, type=float, help='learning rate s
 parser.add_argument('--batch_size', default=64, type=int, metavar='N', help='train batchsize')
 
 parser.add_argument('--num_classes', type=int, default=1, help='Number of Classes in data set.')
-parser.add_argument('--data_path', default='d:/db/data/ice/', type=str, help='Path to dataset')
+parser.add_argument('--data_path', default='/mnt/extDisk/nati/Deep-Learning-Boot-Camp/Kaggle-PyTorch/PyTorch-Ensembler/statoil/input', type=str, help='Path to dataset')
 parser.add_argument('--dataset', type=str, default='statoil', choices=['statoil', 'statoil'],
                     help='Choose between Statoil.')
 
@@ -61,8 +61,8 @@ parser.add_argument('--ngpu', type=int, default=1, help='0 = CPU.')
 parser.add_argument('--workers', type=int, default=0, help='number of data loading workers (default: 0)')
 # random seed
 parser.add_argument('--manualSeed', type=int, default=999, help='manual seed')
-parser.add_argument('--use_tensorboard', type=bool, default=True, help='Log to tensorboard')
-parser.add_argument('--tensorboard_ip', type=str, default='http://192.168.0.2', help='tensorboard IP')
+parser.add_argument('--use_tensorboard', type=bool, default=False, help='Log to tensorboard')
+parser.add_argument('--tensorboard_ip', type=str, default='http://192.168.1.226', help='tensorboard IP')
 args = parser.parse_args()
 
 state = {k: v for k, v in args._get_kwargs()}
@@ -173,13 +173,13 @@ def BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=False):
     return val_result, train_result
 
 
-def loadDB(args):
+def loadDB(args,n_folds=5,current_fold=0):
     # Data
     print('==> Preparing dataset %s' % args.dataset)
     if args.dataset == 'statoil':
         args.num_classes = 1
         args.imgDim = 2
-        trainloader, testloader, trainset, testset = getStatoilTrainValLoaders(args)
+        trainloader, testloader, trainset, testset = getStatoilTrainValLoaders(args,n_folds,current_fold)
 
     return trainloader, testloader, trainset, testset
 
@@ -196,9 +196,11 @@ if __name__ == '__main__':
     # ensembleVer2('./log/DenseNet/pth/', './pth_old/ens2/ens_densnet_1_hours.csv')
 
     # vis = visdom.Visdom(port=6006)
-    trainloader, testloader, trainset, testset = loadDB(args)
+    
     # for i in tqdm(range(0, 51)):
-    for i in range(0, 50):
+    oof = pd.DataFrame()
+    for i in range(n_folds):
+        trainloader, testloader, trainset, testset = loadDB(args,n_folds,i)
         models = ['senet']
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -252,9 +254,12 @@ if __name__ == '__main__':
             recorder = RecorderMeter(args.epochs)  # epoc is updated
 
             val_result, train_result = BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=True)
-            if (float(val_result) < float(0.165) and float(train_result) < float(0.165)):
-                df_pred = BinaryInference(model)
-                savePred(df_pred, model, val_result, train_result, args.save_path_model)
-
+            #if (float(val_result) < float(0.165) and float(train_result) < float(0.165)):
+                #df_pred = BinaryInference(model)
+            df_pred_oof, df_pred_test = BinaryInferenceOofAndTest(model,args,n_folds=n_folds,current_fold=i)
+            oof = pd.concat([oof,pd.DataFrame(df_pred_oof)],axis=0)
+            savePred(df_pred, model, val_result, train_result, args.save_path_model)
             logger.close()
             logger.plot()
+    oof.to_csv('./oof_preds.csv')
+    
