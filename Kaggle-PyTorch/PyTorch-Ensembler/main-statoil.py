@@ -198,6 +198,7 @@ if __name__ == '__main__':
     # vis = visdom.Visdom(port=6006)
     
     # for i in tqdm(range(0, 51)):
+    ids = pd.DataFrame()
     oof = pd.DataFrame()
     for i in range(n_folds):
         trainloader, testloader, trainset, testset = loadDB(args,n_folds,i)
@@ -256,10 +257,12 @@ if __name__ == '__main__':
             val_result, train_result = BinaryTrainAndValidate(model, criterion, optimizer, runId, debug=True)
             #if (float(val_result) < float(0.165) and float(train_result) < float(0.165)):
                 #df_pred = BinaryInference(model)
-            df_pred_oof, df_pred_test = BinaryInferenceOofAndTest(model,args,n_folds=n_folds,current_fold=i)
+            df_pred_oof, df_pred_test, ids_and_labels = BinaryInferenceOofAndTest(model,args,n_folds=n_folds,current_fold=i)
+            ids = pd.concat([ids,ids_and_labels],axis=0)
             oof = pd.concat([oof,pd.DataFrame(df_pred_oof)],axis=0)
             savePred(df_pred_test, model, val_result, train_result, args.save_path_model)
             logger.close()
             logger.plot()
-    oof.to_csv('./oof_preds.csv')
+    oof = pd.concat([ids_and_labels,oof],axis=1)
+    oof.to_csv(args.save_path_model + '/oof_preds.csv')
     

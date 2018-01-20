@@ -635,10 +635,12 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
     skf = StratifiedKFold(n_splits=n_folds,random_state=2018)
     x=df_val_set['id'].values
     y=df_val_set['is_iceberg'].values
+    columns = ['id', 'is_iceberg']
     for i,(train_ind,val_ind) in enumerate(skf.split(X=x,y=y)):
         if i<current_fold:
             pass
         else:
+            ids_and_labels = df_val_set.iloc[val_ind,columns]
             df_val_set = df_val_set.iloc[val_ind,:]
             break
             
@@ -669,7 +671,7 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
         
         df_pred_val = df_pred_val.append({'id': row['id'], 'is_iceberg': p_test}, ignore_index=True)
 
-    return df_pred_val, df_pred_test
+    return df_pred_val, df_pred_test, ids_and_labels
 
 
 def BinaryInference(local_model, args):
