@@ -20,7 +20,7 @@ print("Available models:" + str(model_names))
 
 parser.add_argument('--validationRatio', type=float, default=0.11, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
-parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
+parser.add_argument('--lr_period', default=20, type=float, help='learning rate schedule restart period')
 parser.add_argument('--batch_size', default=64, type=int, metavar='N', help='train batchsize')
 
 parser.add_argument('--num_classes', type=int, default=1, help='Number of Classes in data set.')
@@ -258,11 +258,16 @@ if __name__ == '__main__':
             #if (float(val_result) < float(0.165) and float(train_result) < float(0.165)):
                 #df_pred = BinaryInference(model)
             df_pred_oof, df_pred_test, ids_and_labels = BinaryInferenceOofAndTest(model,args,n_folds=n_folds,current_fold=i)
+            
             ids = pd.concat([ids,ids_and_labels],axis=0)
             oof = pd.concat([oof,pd.DataFrame(df_pred_oof)],axis=0)
+            
+            print('oof: {}, ids: {}'.format(df_pred_oof.shape,ids_and_labels.shape))
+            print('i = '.format(i))
+            
             savePred(df_pred_test, model, val_result, train_result, args.save_path_model)
             logger.close()
             logger.plot()
-    oof = pd.concat([ids_and_labels,oof],axis=1)
+    ids_and_labels.to_csv(args.save_path_model + '/ids_and_labels.csv')
     oof.to_csv(args.save_path_model + '/oof_preds.csv')
     

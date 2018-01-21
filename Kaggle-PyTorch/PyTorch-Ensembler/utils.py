@@ -536,10 +536,10 @@ def selectModel(args, m):
     if m.startswith('senet'):  # block, n_size=1, num_classes=1, num_rgb=2, base=32
         # model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
         model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
-        args.batch_size = 64
-        args.batch_size = 64
-        args.epochs = 42
-        args.lr =  0.0005 # do not change !!! optimal for the Statoil data set
+        args.batch_size = 128
+        args.batch_size = 128
+        args.epochs = 66
+        args.lr =  0.0001 # do not change !!! optimal for the Statoil data set
 
     if m.startswith('densenet'):
         model = nnmodels.densnetXX_generic(args.num_classes, args.imgDim)
@@ -640,7 +640,7 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
         if i<current_fold:
             pass
         else:
-            ids_and_labels = df_val_set.iloc[val_ind,columns]
+            ids_and_labels = df_val_set.iloc[val_ind,[2,4]]
             df_val_set = df_val_set.iloc[val_ind,:]
             break
             
@@ -652,7 +652,7 @@ def BinaryInferenceOofAndTest(local_model,args,n_folds = 5,current_fold=0):
     columns = ['id', 'is_iceberg']
     df_pred_val = pd.DataFrame(data=np.zeros((0, len(columns))), columns=columns)
     # df_pred.id.astype(int)
-    for index, row in df_test_set.iterrows():
+    for index, row in df_val_set.iterrows():
         rwo_no_id = row.drop('id')
         band_1_test = (rwo_no_id['band_1']).reshape(-1, 75, 75)
         band_2_test = (rwo_no_id['band_2']).reshape(-1, 75, 75)
