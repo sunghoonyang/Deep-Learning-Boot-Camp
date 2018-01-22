@@ -202,7 +202,7 @@ if __name__ == '__main__':
     oof = pd.DataFrame()
     for i in range(n_folds):
         trainloader, testloader, trainset, testset = loadDB(args,n_folds,i)
-        models = ['senet']
+        models = ['resnext']
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             fixSeed(args)

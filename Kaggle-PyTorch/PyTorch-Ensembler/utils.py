@@ -503,13 +503,13 @@ def getStatoilTrainValLoaders(args,n_folds=5,current_fold=0):
 
     band_1_tr = np.concatenate([im for im in tr_data['band_1']]).reshape(-1, 75, 75)
     band_2_tr = np.concatenate([im for im in tr_data['band_2']]).reshape(-1, 75, 75)    
-    # band_3=(band_1+band_2)/2
-    local_full_img_tr = np.stack([band_1_tr, band_2_tr], axis=1)
+    #band_3_tr = (band_1_tr+band_2_tr)/2
+    local_full_img_tr = np.stack([band_1_tr, band_2_tr], axis=1)#,band_3_tr], axis=1)
 
     band_1_val = np.concatenate([im for im in val_data['band_1']]).reshape(-1, 75, 75)
     band_2_val = np.concatenate([im for im in val_data['band_2']]).reshape(-1, 75, 75)
-    # band_3=(band_1+band_2)/2
-    local_full_img_val = np.stack([band_1_val, band_2_val], axis=1)
+    #band_3_val = (band_1_val+band_2_val)/2
+    local_full_img_val = np.stack([band_1_val, band_2_val], axis=1)#,band_3_val], axis=1)
     
     
     train_imgs = XnumpyToTensor(local_full_img_tr, args)
@@ -536,10 +536,10 @@ def selectModel(args, m):
     if m.startswith('senet'):  # block, n_size=1, num_classes=1, num_rgb=2, base=32
         # model = nnmodels.senetXX_generic(args.num_classes, args.imgDim, args.base_factor)
         model = nnmodels.senet32_RG_1_classes(args.num_classes, args.imgDim)
-        args.batch_size = 128
-        args.batch_size = 128
+        args.batch_size = 64
+        args.batch_size = 64
         args.epochs = 66
-        args.lr =  0.0001 # do not change !!! optimal for the Statoil data set
+        args.lr =  0.0007 # do not change !!! optimal for the Statoil data set
 
     if m.startswith('densenet'):
         model = nnmodels.densnetXX_generic(args.num_classes, args.imgDim)
