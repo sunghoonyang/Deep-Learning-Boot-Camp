@@ -322,7 +322,7 @@ if __name__ == '__main__':
     models = [
         # 'senet'
         # , 'densenet'
-        , 'minidensenet'
+        'minidensenet'
         # , 'resnext'
         # , 'lenet'
         # , 'wrn'
