@@ -318,7 +318,7 @@ if __name__ == '__main__':
         # cc.remove_all_experiments()
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
-    print('Çlasses {}'.format(classes))
+    print('Classes {}'.format(classes))
     models = ['senet', 'densenet', 'minidensenet', 'resnext', 'lenet', 'wrn']
     for i in range (1,5):
         for m in models:
