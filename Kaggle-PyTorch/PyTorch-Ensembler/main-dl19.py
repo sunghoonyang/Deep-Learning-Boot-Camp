@@ -53,14 +53,6 @@ data_transforms = {
     ])
 }
 
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
-                                             data_transforms[x])
-                  for x in ['train', 'val']}
-
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
-                                             shuffle=True, num_workers=dev_cnt*4, pin_memory=True)
-              for x in ['train', 'val']}
-dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
 class_names = image_datasets['train'].classes
 parser.add_argument('--validationRatio', type=float, default=0.90, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
@@ -70,7 +62,7 @@ parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='tra
 parser.add_argument('--num_classes', type=int, default=12, help='Number of Classes in data set.')
 parser.add_argument('--data_path', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/train/', type=str, help='Path to train dataset')
 parser.add_argument('--data_path_test', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/val/', type=str, help='Path to test dataset')
-parser.add_argument('--dataset', type=str, default='dl19', choices=['cats'], help='Choose between data sets')
+parser.add_argument('--dataset', type=str, default='DL19', help='Name of Data set')
 
 # parser.add_argument('--arch', metavar='ARCH', default='simple', choices=model_names)
 parser.add_argument('--imgDim', default=3, type=int, help='number of Image input dimensions')
@@ -92,8 +84,8 @@ parser.add_argument('--save_path_model', type=str, default='/home/shy256/scratch
 parser.add_argument('--start_epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
 parser.add_argument('--evaluate', dest='evaluate', action='store_true', help='evaluate model on validation set')
 # Acceleration
-parser.add_argument('--ngpu', type=int, default=1, help='0 = CPU.')
-parser.add_argument('--workers', type=int, default=0, help='number of data loading workers (default: 0)')
+parser.add_argument('--ngpu', type=int, default=3, help='0 = CPU.')
+parser.add_argument('--workers', type=int, default=12, help='number of data loading workers (default: 0)')
 # random seed
 parser.add_argument('--manualSeed', type=int, default=999, help='manual seed')
 
@@ -339,7 +331,7 @@ if __name__ == '__main__':
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Çlasses {}'.format(classes))
-    models = ['vggnet']
+    models = ['conv3x3', 'dropout', 'pool', 'relu', 'resnext', 'se_resnet101', 'se_resnet152', 'se_resnet18', 'se_resnet34', 'se_resnet50', 'unet', 'wrn']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
