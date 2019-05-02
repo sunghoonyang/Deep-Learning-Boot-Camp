@@ -26,34 +26,9 @@ model_names = sorted(name for name in nnmodels.__dict__
                      if name.islower() and not name.startswith("__")
                      and callable(nnmodels.__dict__[name]))
 
-parser = argparse.ArgumentParser(description='PyTorch Ensembler')
 
 print("Available models:" + str(model_names))
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-dev_cnt = torch.cuda.device_count()
-
-
-user_nm = ['shy256']
-user_nm = user_nm[0]
-data_dir = f'/scratch/{user_nm}/ssl_data_96/supervised_100cate'
-
-data_transforms = {
-    'train': transforms.Compose([
-        transforms.RandomResizedCrop(224),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-    'val': transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
-}
-
-class_names = image_datasets['train'].classes
 parser.add_argument('--validationRatio', type=float, default=0.90, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
 parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
