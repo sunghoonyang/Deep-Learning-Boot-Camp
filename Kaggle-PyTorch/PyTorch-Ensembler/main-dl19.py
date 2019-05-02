@@ -319,7 +319,7 @@ if __name__ == '__main__':
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Çlasses {}'.format(classes))
-    models = ['conv3x3', 'dropout', 'pool', 'relu', 'resnext', 'se_resnet101', 'se_resnet152', 'se_resnet18', 'se_resnet34', 'se_resnet50', 'unet', 'wrn']
+    models = ['senet', 'densenet', 'minidensenet', 'resnext', 'lenet', 'wrn']
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
