@@ -319,7 +319,14 @@ if __name__ == '__main__':
 
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Classes {}'.format(classes))
-    models = ['senet', 'densenet', 'minidensenet', 'resnext', 'lenet', 'wrn']
+    models = [
+        # 'senet'
+        # , 'densenet'
+        , 'minidensenet'
+        # , 'resnext'
+        # , 'lenet'
+        # , 'wrn'
+    ]
     for i in range (1,5):
         for m in models:
             runId = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -349,7 +356,7 @@ if __name__ == '__main__':
             print_log("=> Final model name '{}'".format(model_name), log)
             # print_log("=> Full model '{}'".format(model), log)
             # model = torch.nn.DataParallel(model).cuda()
-            model.cuda()
+            # model.cuda()
             cudnn.benchmark = True
             print('    Total params: %.2fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
             print('Batch size : {}'.format(args.batch_size))
