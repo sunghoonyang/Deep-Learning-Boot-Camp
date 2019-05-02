@@ -29,16 +29,48 @@ model_names = sorted(name for name in nnmodels.__dict__
 parser = argparse.ArgumentParser(description='PyTorch Ensembler')
 
 print("Available models:" + str(model_names))
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+dev_cnt = torch.cuda.device_count()
+
+
+user_nm = ['shy256']
+user_nm = user_nm[0]
+data_dir = f'/scratch/{user_nm}/ssl_data_96/supervised_100cate'
+
+data_transforms = {
+    'train': transforms.Compose([
+        transforms.RandomResizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ]),
+    'val': transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+}
+
+image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
+                                             data_transforms[x])
+                  for x in ['train', 'val']}
+
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=32,
+                                             shuffle=True, num_workers=dev_cnt*4, pin_memory=True)
+              for x in ['train', 'val']}
+dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
+class_names = image_datasets['train'].classes
 parser.add_argument('--validationRatio', type=float, default=0.90, help='test Validation Split.')
 parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
 parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
 parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='train batchsize')
 
 parser.add_argument('--num_classes', type=int, default=12, help='Number of Classes in data set.')
-parser.add_argument('--data_path', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/train/', type=str, help='Path to train dataset')
-parser.add_argument('--data_path_test', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/val/', type=str, help='Path to test dataset')
-parser.add_argument('--dataset', type=str, default='catdog', choices=['cats'], help='Choose between data sets')
+parser.add_argument('--data_path', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/train', type=str, help='Path to train dataset')
+parser.add_argument('--data_path_test', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/val', type=str, help='Path to test dataset')
+parser.add_argument('--dataset', type=str, default='dl19', choices=['cats'], help='Choose between data sets')
 
 # parser.add_argument('--arch', metavar='ARCH', default='simple', choices=model_names)
 parser.add_argument('--imgDim', default=3, type=int, help='number of Image input dimensions')
@@ -55,8 +87,8 @@ parser.add_argument('--decay', type=float, default=0.0005, help='Weight decay (L
 
 # Checkpoints
 parser.add_argument('--print_freq', default=400, type=int, metavar='N', help='print frequency (default: 200)')
-parser.add_argument('--save_path', type=str, default='/home/shy256/scratch/dl_19_submission/log/', help='Folder to save checkpoints and log.')
-parser.add_argument('--save_path_model', type=str, default='/home/shy256/scratch/dl_19_submission/model/', help='Folder to save checkpoints and log.')
+parser.add_argument('--save_path', type=str, default='/home/shy256/scratch/dl_19_submission/log', help='Folder to save checkpoints and log.')
+parser.add_argument('--save_path_model', type=str, default='/home/shy256/scratch/dl_19_submission/model', help='Folder to save checkpoints and log.')
 parser.add_argument('--start_epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
 parser.add_argument('--evaluate', dest='evaluate', action='store_true', help='evaluate model on validation set')
 # Acceleration
@@ -178,6 +210,7 @@ def validate(val_loader, model, criterion, args):
 
 
 def loadDB(args):
+
     # Data
     print('==> Preparing dataset %s' % args.dataset)
 
@@ -186,8 +219,8 @@ def loadDB(args):
     train_data = df.sample(frac=args.validationRatio)
     valid_data = df[~df['file'].isin(train_data['file'])]
 
-    train_set = SeedDataset(train_data, args.data_path, transform=train_trans)
-    valid_set = SeedDataset(valid_data, args.data_path, transform=valid_trans)
+    train_set = SeedDataset(train_data, args.data_path, transform=data_transforms['train'])
+    valid_set = SeedDataset(valid_data, args.data_path, transform=data_transforms['val'])
 
     t_loader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=args.workers)
     v_loader = DataLoader(valid_set, batch_size=args.batch_size, shuffle=True, num_workers=args.workers)
