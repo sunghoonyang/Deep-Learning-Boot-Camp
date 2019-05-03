@@ -30,28 +30,25 @@ model_names = sorted(name for name in nnmodels.__dict__
 print("Available models:" + str(model_names))
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 and 100 Training')
 parser.add_argument('--validationRatio', type=float, default=0.90, help='test Validation Split.')
-parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
-parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
-parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='train batchsize')
-
-parser.add_argument('--num_classes', type=int, default=12, help='Number of Classes in data set.')
 parser.add_argument('--data_path', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/train/', type=str, help='Path to train dataset')
 parser.add_argument('--data_path_test', default='/home/shy256/scratch/ssl_data_96/supervised_100cate/val/', type=str, help='Path to test dataset')
+parser.add_argument('--num_classes', type=int, default=12, help='Number of Classes in data set.')
+parser.add_argument('--epochs', type=int, default=70, help='Number of epochs to train.')
+parser.add_argument('--batch_size', default=16, type=int, metavar='N', help='train batchsize')
+parser.add_argument('--ngpu', type=int, default=3, help='0 = CPU.')
+parser.add_argument('--workers', type=int, default=9, help='number of data loading workers (default: 0)')
+parser.add_argument('--optim', type=str, default='adam', help='Adam or SGD')
+parser.add_argument('--lr_period', default=10, type=float, help='learning rate schedule restart period')
 parser.add_argument('--dataset', type=str, default='DL19', help='Name of Data set')
-
 # parser.add_argument('--arch', metavar='ARCH', default='simple', choices=model_names)
 parser.add_argument('--imgDim', default=3, type=int, help='number of Image input dimensions')
 parser.add_argument('--img_scale', default=224, type=int, help='Image scaling dimensions')
 parser.add_argument('--base_factor', default=20, type=int, help='SENet base factor')
-
-parser.add_argument('--epochs', type=int, default=70, help='Number of epochs to train.')
 parser.add_argument('--current_time', type=str, default=datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),
                     help='Current time.')
-
 parser.add_argument('--lr', '--learning-rate', type=float, default=0.0005, help='The Learning Rate.')
 parser.add_argument('--momentum', type=float, default=0.95, help='Momentum.')
 parser.add_argument('--decay', type=float, default=0.0005, help='Weight decay (L2 penalty).')
-
 # Checkpoints
 parser.add_argument('--print_freq', default=400, type=int, metavar='N', help='print frequency (default: 200)')
 parser.add_argument('--save_path', type=str, default='/home/shy256/scratch/dl_19_submission/log', help='Folder to save checkpoints and log.')
@@ -59,8 +56,6 @@ parser.add_argument('--save_path_model', type=str, default='/home/shy256/scratch
 parser.add_argument('--start_epoch', default=0, type=int, metavar='N', help='manual epoch number (useful on restarts)')
 parser.add_argument('--evaluate', dest='evaluate', action='store_true', help='evaluate model on validation set')
 # Acceleration
-parser.add_argument('--ngpu', type=int, default=3, help='0 = CPU.')
-parser.add_argument('--workers', type=int, default=12, help='number of data loading workers (default: 0)')
 # random seed
 parser.add_argument('--manualSeed', type=int, default=999, help='manual seed')
 
@@ -84,6 +79,7 @@ try:
     from pycrayon import CrayonClient
 except ImportError:
     CrayonClient = None
+
 
 def train(train_loader, model, criterion, optimizer, args):
     if args.use_cuda:
@@ -111,9 +107,9 @@ def train(train_loader, model, criterion, optimizer, args):
         loss = criterion(y_pred, target)
 
         # measure accuracy and record loss
-        prec1, prec1 = accuracy(y_pred.data, target.data, topk=(1, 1))
-        losses.update(loss.data[0], images.size(0))
-        acc.update(prec1[0], images.size(0))
+        prec1, temp_var = accuracy(y_pred.data, target.data, topk=(1, 1))
+        losses.update(loss.data.item(), images.size(0))
+        acc.update(prec1.item(), images.size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -131,6 +127,7 @@ def train(train_loader, model, criterion, optimizer, args):
                 exp.add_scalar_value('tr_epoch_acc', acc.avg, step=epoch)
 
     return float('{loss.avg:.4f}'.format(loss=losses)), float('{acc.avg:.4f}'.format(acc=acc))
+
 
 def validate(val_loader, model, criterion, args):
     if args.use_cuda:
@@ -157,8 +154,8 @@ def validate(val_loader, model, criterion, args):
 
         # measure accuracy and record loss
         prec1, temp_var = accuracy(y_pred.data, labels.data, topk=(1, 1))
-        losses.update(loss.data[0], images.size(0))
-        acc.update(prec1[0], images.size(0))
+        losses.update(loss.data.item(), images.size(0))
+        acc.update(prec1.item(), images.size(0))
 
         # measure elapsed time
         batch_time.update(time.time() - end)
@@ -216,19 +213,12 @@ def loadDB(args):
 
     return t_loader, v_loader, train_set, valid_set, classes, class_to_idx, num_to_class, df
 
+
 columns = ['id', 'label']
+
 
 from ktransforms import *
 
-# train_trans = transforms.Compose([
-#     transforms.RandomSizedCrop(args.img_scale),
-#     transforms.RandomHorizontalFlip(),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225],),
-#     RandomErasing(),
-# ])
-
-## Augmentation + Normalization for full training
 train_trans = transforms.Compose([
     transforms.RandomSizedCrop(args.img_scale),
     PowerPIL(),
@@ -244,16 +234,9 @@ valid_trans = transforms.Compose([
     transforms.ToTensor(),
     normalize_img
 ])
-# valid_trans = transforms.Compose([
-#     transforms.Scale(256),
-#     transforms.CenterCrop(args.img_scale),
-#     transforms.ToTensor(),
-#     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-#     #RandomErasing(),
-# ])
-# valid_trans=ds_transform_raw
 
 test_trans = valid_trans
+
 
 def testImageLoader(image_name):
     """load image, returns cuda tensor"""
@@ -307,6 +290,7 @@ def testModel(test_dir, local_model, sample_submission):
     df_pred['id'].astype(int)
     return df_pred
 
+
 if __name__ == '__main__':
 
     # tensorboad
@@ -320,12 +304,18 @@ if __name__ == '__main__':
     trainloader, valloader, trainset, valset, classes, class_to_idx, num_to_class, df = loadDB(args)
     print('Classes {}'.format(classes))
     models = [
-        # 'senet'
-        # , 'densenet'
-        'minidensenet'
-        # , 'resnext'
-        # , 'lenet'
-        # , 'wrn'
+        # 'densenet', x
+        # 'googlenet', x
+        'lenet',
+        # 'linknet', x
+        'minidensenet',
+        # 'resnext', x
+        'senet',
+        # 'simplenet', x
+        # 'unet', x
+        # 'vggnet', x
+        # 'wideresnet', x
+        # 'wrn', x
     ]
     for i in range (1,5):
         for m in models:
